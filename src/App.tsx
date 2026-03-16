@@ -224,7 +224,7 @@ function App() {
               )}
 
               <div className="form-group">
-                <label>預計領取日期 & 時間 (基金會開放時間：週三-五 9-21, 週六-日 9-17，週一二不開放) *</label>
+                <label>預計領取日期 & 時間 (開放日 09:00-15:00，週一二不開放) *</label>
                 <DatePicker
                   selected={formData.pickupTime ? new Date(formData.pickupTime) : null}
                   onChange={handleDateChange}
@@ -237,6 +237,8 @@ function App() {
                   placeholderText="請選擇領取時間"
                   required
                   filterDate={(date) => date.getDay() !== 1 && date.getDay() !== 2}
+                  minTime={new Date(new Date().setHours(9, 0, 0))}
+                  maxTime={new Date(new Date().setHours(15, 0, 0))}
                 />
               </div>
               <div className="form-group">
