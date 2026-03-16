@@ -90,6 +90,8 @@ function App() {
     // 準備要傳送的資料
     const submissionData: any = {
       ...formData,
+      players: formData.players.trim() || '1', // 若未填寫則預設為 1
+      notes: formData.notes.trim() || '無',    // 若未填寫則預設為 無
       paymentMethod: formData.paymentMethod.split(' (')[0], // 只取 "Line Pay" 或 "親至..."，過濾括號後的網址
       bankLast5: bankLast5,
       totalAmount: calculatedTotal,
