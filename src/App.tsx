@@ -79,7 +79,7 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <div className="era-badge">清領 x 昭和</div>
+        <div className="era-badge">光緒 x 昭和</div>
         <h1>【新港八卦迷蹤】</h1>
         <h2 className="main-title">實境解謎 活動報名</h2>
       </header>
