@@ -67,8 +67,16 @@ function App() {
           <div className="summary-box">
             <p><strong>報名場次：</strong>{formData.session}</p>
             <p><strong>訂單總額：</strong>NT$ {calculatedTotal}</p>
-            <p><strong>付款方式：</strong>{formData.paymentMethod}</p>
+            <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
             {formData.paymentMethod === '銀行轉帳/ATM' && <p className="bank-alert">請記得轉帳至：(617) 00817220606250</p>}
+            {formData.paymentMethod.includes('Line Pay') && (
+              <div className="linepay-box">
+                <p>請點擊下方連結完成 Line Pay 付款：</p>
+                <a href="https://qrcodepay.line.me/qr/payment/t1pM7jY1P9C5oOEJ7gc7o%252FnGCvoXh75q7xD7BSn4lKJxf9hIkbwGfT9i8EeGD2QC" target="_blank" rel="noopener noreferrer" className="linepay-btn">
+                  前往 Line Pay 付款 ➔
+                </a>
+              </div>
+            )}
           </div>
           <button onClick={() => setSubmitted(false)} className="cta-button">返回首頁</button>
         </div>
@@ -181,6 +189,10 @@ function App() {
                 <div className="radio-group">
                   <label><input type="radio" name="paymentMethod" value="親至新港文教基金會繳費" checked={formData.paymentMethod === '親至新港文教基金會繳費'} onChange={handleInputChange} /> 親至新港文教基金會繳費</label>
                   <label><input type="radio" name="paymentMethod" value="銀行轉帳/ATM" checked={formData.paymentMethod === '銀行轉帳/ATM'} onChange={handleInputChange} /> 銀行轉帳/ATM</label>
+                  <label>
+                    <input type="radio" name="paymentMethod" value="Line Pay (https://qrcodepay.line.me/qr/payment/t1pM7jY1P9C5oOEJ7gc7o%252FnGCvoXh75q7xD7BSn4lKJxf9hIkbwGfT9i8EeGD2QC)" checked={formData.paymentMethod.includes('Line Pay')} onChange={handleInputChange} /> 
+                    Line Pay (點此前往付款網址)
+                  </label>
                 </div>
               </div>
 

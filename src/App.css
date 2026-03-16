@@ -7,6 +7,7 @@
   --card-bg: #2c3e50;
   --text-light: #ecf0f1;
   --text-muted: #bdc3c7;
+  --line-green: #00b900;
 }
 
 body {
@@ -20,7 +21,7 @@ body {
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem 1.5rem; /* 稍微縮小行動版邊距 */
+  padding: 2rem 1.5rem;
 }
 
 /* Header Styles */
@@ -44,7 +45,6 @@ body {
 
 .header h1 {
   font-family: 'Noto Serif TC', serif;
-  /* 使用 clamp 讓字體在 1.8rem 到 3.5rem 之間根據螢幕縮放 */
   font-size: clamp(1.8rem, 8vw, 3.5rem); 
   color: var(--primary-gold);
   margin: 0.5rem 0;
@@ -64,7 +64,7 @@ body {
   width: 100%;
   max-width: 800px;
   margin: 0 auto 3rem;
-  border: 4px solid var(--primary-gold); /* 恢復厚邊框 */
+  border: 4px solid var(--primary-gold);
   box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 20px rgba(241, 196, 15, 0.2);
   line-height: 0;
   overflow: hidden;
@@ -80,10 +80,10 @@ body {
 /* Section Box */
 .story-box, .event-info {
   background: linear-gradient(145deg, rgba(44, 62, 80, 0.8), rgba(26, 37, 47, 0.9));
-  padding: 2rem; /* 恢復較大的 Padding */
+  padding: 2rem;
   border-radius: 20px;
   margin-bottom: 3rem;
-  border: 2px solid rgba(241, 196, 15, 0.3); /* 稍微加厚邊框 */
+  border: 2px solid rgba(241, 196, 15, 0.3);
   box-shadow: 0 15px 35px rgba(0,0,0,0.4);
 }
 
@@ -122,7 +122,7 @@ body {
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* 讓格子自動適應且不擠壓 */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
 }
@@ -188,7 +188,7 @@ body {
 .form-group label {
   font-size: 0.95rem;
   font-weight: bold;
-  color: var(--primary-gold); /* 讓標籤顏色更顯眼 */
+  color: var(--primary-gold);
   margin-bottom: 0.5rem;
   display: block;
 }
@@ -205,7 +205,7 @@ textarea {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: white;
-  font-size: 16px !important; /* 防止 iOS 縮放 */
+  font-size: 16px !important;
   box-sizing: border-box;
   transition: all 0.3s ease;
 }
@@ -227,9 +227,29 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.radio-group input[type="radio"] {
+  width: auto;
+}
+
 .checkbox-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+/* Bank Info Box */
+.bank-info {
+  background: rgba(230, 126, 34, 0.1);
+  padding: 1.5rem;
+  border-left: 4px solid var(--accent-orange);
+  margin-top: 1rem;
 }
 
 /* Submit Container Responsive */
@@ -256,13 +276,11 @@ input:focus, select:focus, textarea:focus {
     gap: 1rem;
     padding: 1.5rem;
   }
-
   .total-display {
     width: 100%;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     padding-bottom: 0.5rem;
   }
-
   .submit-btn {
     width: 100%;
   }
@@ -287,6 +305,81 @@ input:focus, select:focus, textarea:focus {
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* Success Screen */
+.success-screen {
+  text-align: center;
+  padding: 3rem 1rem;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.check-icon {
+  width: 80px;
+  height: 80px;
+  background: #27ae60;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin: 0 auto 2rem;
+}
+
+.summary-box {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 20px;
+  margin: 2rem auto;
+  max-width: 500px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.linepay-box {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.linepay-btn {
+  display: inline-block;
+  background: var(--line-green);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: transform 0.2s;
+}
+
+.linepay-btn:hover {
+  transform: scale(1.05);
+  background: #00a000;
+}
+
+.bank-alert {
+  color: var(--accent-orange);
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.cta-button {
+  background: var(--card-bg);
+  color: white;
+  border: 1px solid var(--primary-gold);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 2rem;
 }
 
 /* Footer Styles */
@@ -317,13 +410,4 @@ input:focus, select:focus, textarea:focus {
   margin-top: 3rem;
   font-size: 0.9rem;
   color: #666;
-}
-
-@media (max-width: 768px) {
-  .submit-container {
-    flex-direction: column;
-    gap: 1.5rem;
-    position: relative;
-    bottom: 0;
-  }
 }
