@@ -58,29 +58,19 @@ body {
 /* Poster Area */
 .poster-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto 3rem;
-}
-
-.poster-placeholder {
-  width: 100%;
-  aspect-ratio: 9/12;
-  background: linear-gradient(45deg, #2c3e50, #000);
   border: 4px solid var(--primary-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  position: relative;
+  line-height: 0;
+  overflow: hidden;
+  border-radius: 8px;
 }
 
-.poster-text {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--primary-gold);
-  writing-mode: vertical-rl;
-  letter-spacing: 10px;
+.poster-image {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* Section Box */

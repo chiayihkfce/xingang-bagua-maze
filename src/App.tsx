@@ -86,9 +86,7 @@ function App() {
 
       <main className="main-content">
         <div className="poster-container">
-          <div className="poster-placeholder">
-            <span className="poster-text">新港八卦謎蹤</span>
-          </div>
+          <img src="poster.jpg" alt="新港八卦迷蹤 海報" className="poster-image" />
         </div>
 
         <section className="story-section">
