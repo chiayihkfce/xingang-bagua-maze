@@ -47,6 +47,12 @@ function App() {
       const day = date.getDay();
       if (day === 1 || day === 2) return;
 
+      // 如果選取的時間不在 09:00 - 15:00 之間（例如點選日期後預設的 00:00），則強制設為 09:00
+      const hours = date.getHours();
+      if (hours < 9 || hours > 15) {
+        date.setHours(9, 0, 0);
+      }
+
       // 轉換為 YYYY-MM-DD HH:mm 格式字串存入 formData
       const formattedDate = date.toLocaleString('zh-TW', {
         year: 'numeric',
