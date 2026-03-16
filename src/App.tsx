@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 
 function App() {
@@ -39,6 +41,21 @@ function App() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      // 轉換為 YYYY-MM-DD HH:mm 格式字串存入 formData
+      const formattedDate = date.toLocaleString('zh-TW', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).replace(/\//g, '-');
+      setFormData(prev => ({ ...prev, pickupTime: formattedDate }));
+    }
+  };
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     setFormData(prev => {
@@ -66,7 +83,7 @@ function App() {
           <p>我們已收到您的報名資訊，請確認以下明細並完成繳費。</p>
           <div className="summary-box">
             <p><strong>報名場次：</strong>{formData.session}</p>
-            <p><strong>預計領取時間：</strong>{formData.pickupTime.replace('T', ' ')}</p>
+            <p><strong>預計領取時間：</strong>{formData.pickupTime}</p>
             <p><strong>訂單總額：</strong>NT$ {calculatedTotal}</p>
             <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
             {formData.paymentMethod === '銀行轉帳/ATM' && <p className="bank-alert">請記得轉帳至：(617) 00817220606250</p>}
@@ -208,7 +225,18 @@ function App() {
 
               <div className="form-group">
                 <label>預計領取日期 & 時間 (基金會開放時間：週二-五 9-21, 週六-日 9-17) *</label>
-                <input type="datetime-local" name="pickupTime" required value={formData.pickupTime} onChange={handleInputChange} />
+                <DatePicker
+                  selected={formData.pickupTime ? new Date(formData.pickupTime) : null}
+                  onChange={handleDateChange}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  timeCaption="時間"
+                  dateFormat="yyyy-MM-dd HH:mm"
+                  className="date-picker-input"
+                  placeholderText="請選擇領取時間"
+                  required
+                />
               </div>
               <div className="form-group">
                 <label>領取地點 *</label>

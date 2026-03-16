@@ -197,7 +197,7 @@ input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="number"],
-input[type="datetime-local"],
+.date-picker-input,
 select,
 textarea {
   width: 100%;
@@ -213,14 +213,63 @@ textarea {
   -webkit-appearance: none;
 }
 
-/* 讓 Chrome/Edge 的日曆圖示顯示出來 */
-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  cursor: pointer;
-  padding: 0.2rem;
+/* DatePicker 容器寬度 */
+.react-datepicker-wrapper {
+  width: 100%;
 }
 
-input:focus, select:focus, textarea:focus {
+/* DatePicker 深色主題美化 */
+.react-datepicker {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--primary-gold) !important;
+  color: white !important;
+  font-family: inherit !important;
+}
+
+.react-datepicker__header {
+  background-color: rgba(0,0,0,0.3) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.react-datepicker__current-month, 
+.react-datepicker__day-name,
+.react-datepicker-time__header {
+  color: var(--primary-gold) !important;
+}
+
+.react-datepicker__day {
+  color: white !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: var(--primary-gold) !important;
+  color: black !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: var(--accent-orange) !important;
+  color: white !important;
+}
+
+.react-datepicker__time-container {
+  background-color: var(--card-bg) !important;
+  border-left: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.react-datepicker__time-box {
+  background-color: var(--card-bg) !important;
+}
+
+.react-datepicker__time-list-item {
+  color: white !important;
+}
+
+.react-datepicker__time-list-item:hover {
+  background-color: var(--primary-gold) !important;
+  color: black !important;
+}
+
+input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   outline: none;
   border-color: var(--primary-gold);
   background: rgba(0, 0, 0, 0.6);
