@@ -8,7 +8,7 @@ function App() {
     name: '',
     phone: '',
     contactEmail: '',
-    session: '5/2(五)新港市集+沉浸體驗特別場（早鳥/現場價$650/份）',
+    session: '5/2(六)新港市集+沉浸體驗特別場（早鳥/現場價$650/份）',
     quantity: '1',
     players: '',
     totalAmount: '',
@@ -155,7 +155,7 @@ function App() {
               <div className="form-group">
                 <label>【報名場次】 *</label>
                 <select name="session" value={formData.session} onChange={handleInputChange}>
-                  <option value="5/2(五)新港市集+沉浸體驗特別場（早鳥/現場價$650/份）">5/2(五)新港市集+沉浸體驗特別場 ($650)</option>
+                  <option value="5/2(六)新港市集+沉浸體驗特別場（早鳥/現場價$650/份）">5/2(六)新港市集+沉浸體驗特別場 ($650)</option>
                   <option value="團體優惠價（5份以上/含導覽/需電話預約）$550/份">團體優惠價 (5份以上/含導覽) $550</option>
                   <option value="校園團體（請電洽新港文教基金會）$500/份">校園團體 $500</option>
                   <option value="單人購買（隨時出發/無導覽/無參與活動）$600/份">單人購買 (隨時出發) $600</option>
