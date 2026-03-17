@@ -816,6 +816,12 @@ function App() {
                     <option disabled>載入中...</option>
                   )}
                 </select>
+                {/* 優惠告示窗 */}
+                {sessionType === '一般預約' && (
+                  <div className="discount-hint">
+                    ★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <label>份數 *</label>
