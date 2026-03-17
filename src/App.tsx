@@ -386,6 +386,24 @@ function App() {
   };
 
   const handleConfirmSubmit = async () => {
+    // --- 二次驗證邏輯 ---
+    const qty = parseInt(formData.quantity) || 0;
+    const players = parseInt(formData.players) || 0;
+    const maxPlayers = qty * 4;
+
+    if (qty <= 0) {
+      alert('【報名失敗】份數必須至少為 1 份。');
+      setShowConfirmation(false);
+      return;
+    }
+
+    if (players <= 0 || players > maxPlayers) {
+      alert(`【報名失敗】遊玩人數不符規定。\n目前報名 ${qty} 份，遊玩人數上限應為 ${maxPlayers} 人。\n請檢查後重新輸入。`);
+      setShowConfirmation(false);
+      return;
+    }
+    // ------------------
+
     setIsSubmitting(true);
     setShowConfirmation(false);
 
