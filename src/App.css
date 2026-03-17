@@ -276,10 +276,9 @@ textarea {
   color: white;
 }
 
-/* 禁用時間的樣式 */
+/* 禁用時間的樣式：完全隱藏，不只是反灰 */
 .react-datepicker__time-list-item--disabled {
-  color: #666 !important;
-  text-decoration: none !important;
+  display: none !important;
 }
 
 .react-datepicker__time-list-item:hover {
