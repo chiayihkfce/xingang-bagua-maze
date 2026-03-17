@@ -738,29 +738,37 @@ function App() {
 
             <div className="form-card">
               <h3 className="form-section-title">報名資訊</h3>
+              
               <div className="form-group">
-                <label>【報名場次】 *</label>
+                <label>【場次類型】 *</label>
+                <select 
+                  value={sessionType} 
+                  onChange={(e) => {
+                    const newType = e.target.value as '一般預約' | '特別預約';
+                    setSessionType(newType);
+                    // 切換類型後，自動選中該類型的第一個場次
+                    const filtered = sessions.filter(s => 
+                      newType === '特別預約' ? (s.fixedDate || s.fixedTime) : (!s.fixedDate && !s.fixedTime)
+                    );
+                    if (filtered.length > 0) {
+                      handleInputChange({ 
+                        target: { name: 'session', value: filtered[0].name } 
+                      } as any);
+                    }
+                  }}
+                >
+                  <option value="一般預約">📅 一般預約 (自由選擇遊玩時段)</option>
+                  <option value="特別預約">✨ 特別預約 (固定日期與特定時段)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>【詳細場次】 *</label>
                 <select name="session" value={formData.session} onChange={handleInputChange}>
                   {sessions.length > 0 ? (
-                    <>
-                      {/* 特別預約場次：有固定日期或時間 */}
-                      {sessions.filter(s => s.fixedDate || s.fixedTime).length > 0 && (
-                        <optgroup label="✨ 特別預約場次 (固定日期時段)">
-                          {sessions.filter(s => s.fixedDate || s.fixedTime).map(s => (
-                            <option key={s.name} value={s.name}>{s.name} (${s.price})</option>
-                          ))}
-                        </optgroup>
-                      )}
-                      
-                      {/* 一般預約場次：無固定日期時間 */}
-                      {sessions.filter(s => !s.fixedDate && !s.fixedTime).length > 0 && (
-                        <optgroup label="📅 一般預約場次 (自由選擇時段)">
-                          {sessions.filter(s => !s.fixedDate && !s.fixedTime).map(s => (
-                            <option key={s.name} value={s.name}>{s.name} (${s.price})</option>
-                          ))}
-                        </optgroup>
-                      )}
-                    </>
+                    sessions
+                      .filter(s => sessionType === '特別預約' ? (s.fixedDate || s.fixedTime) : (!s.fixedDate && !s.fixedTime))
+                      .map(s => <option key={s.name} value={s.name}>{s.name} (${s.price})</option>)
                   ) : (
                     <option disabled>載入中...</option>
                   )}
