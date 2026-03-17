@@ -502,10 +502,11 @@ function App() {
                   required
                   minDate={new Date()}
                   filterDate={(date) => date.getDay() !== 1 && date.getDay() !== 2}
+                  minTime={new Date(new Date().setHours(9, 0, 0))}
+                  maxTime={new Date(new Date().setHours(15, 0, 0))}
                   filterTime={(time) => {
                     const hours = time.getHours();
                     const minutes = time.getMinutes();
-                    // 9:00 到 15:00，且 15:00 之後的分鐘數必須為 0
                     if (hours >= 9 && hours < 15) return true;
                     if (hours === 15 && minutes === 0) return true;
                     return false;
