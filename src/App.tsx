@@ -190,6 +190,29 @@ function App() {
     }
   };
 
+  // 7. 管理操作：開啟修改視窗
+  const startEditSubmission = (row: any[], index: number) => {
+    setEditingRowIndex(index);
+    setEditData({
+      timestamp: row[0],
+      email: row[1],
+      name: row[2],
+      phone: row[3],
+      contactEmail: row[4],
+      session: row[5],
+      quantity: row[6],
+      players: row[7],
+      totalAmount: row[8],
+      paymentMethod: row[9],
+      bankLast5: row[10],
+      pickupTime: row[11],
+      pickupLocation: row[12],
+      referral: row[13],
+      notes: row[14]
+    });
+    setIsEditing(true);
+  };
+
   // 8. 管理操作：送出修改
   const handleUpdateSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
