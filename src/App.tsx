@@ -669,12 +669,11 @@ function App() {
                   <span style={{color: 'var(--text-light)', fontSize: '0.9rem'}}>🔍 依遊玩日期篩選：</span>
                   <DatePicker
                     selected={adminFilterDate}
-                    onChange={handleDateFilter}
+                    onChange={(date: Date | null) => handleDateFilter(date)}
                     dateFormat="yyyy-MM-dd"
                     placeholderText="選擇日期"
                     className="date-picker-input"
                     isClearable
-                    style={{width: '150px'}}
                   />
                   {adminFilterDate && (
                     <button 
