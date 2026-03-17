@@ -25,7 +25,7 @@ function App() {
     contactEmail: '',
     session: '',
     quantity: '1',
-    players: '',
+    players: '1',
     totalAmount: '',
     paymentMethod: '親至新港文教基金會繳費',
     bankLast5: '',
@@ -751,8 +751,12 @@ function App() {
                 <input type="number" name="quantity" min="1" required value={formData.quantity} onChange={handleInputChange} />
               </div>
               <div className="form-group">
-                <label>當天遊玩人數 (如為單人購買可不填)</label>
-                <input type="text" name="players" value={formData.players} onChange={handleInputChange} placeholder="例如：4人" />
+                <label>當天遊玩人數 (每份解謎包建議 1-4 人) *</label>
+                <select name="players" value={formData.players} onChange={handleInputChange}>
+                  {Array.from({ length: Number(formData.quantity) * 4 }, (_, i) => i + 1).map(num => (
+                    <option key={num} value={num}>{num}人</option>
+                  ))}
+                </select>
               </div>
             </div>
 
