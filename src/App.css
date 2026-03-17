@@ -486,11 +486,11 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 .footer-bottom {
   margin-top: 3rem;
   display: flex;
+  flex-direction: column; /* 強制改為垂直排列 */
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   position: relative;
-  flex-wrap: wrap;
 }
 
 .admin-trigger {
