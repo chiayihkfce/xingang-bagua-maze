@@ -374,6 +374,34 @@ function App() {
     }
   };
 
+  // 6.5 管理操作：審核付款
+  const handleVerifyPayment = async (rowIndex: number, status: string) => {
+    if (!window.confirm(`確定要將此筆報名標記為「${status}」嗎？`)) return;
+    setIsDataLoading(true);
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'verifyPayment', pw: adminPassword, rowIndex, status })
+      });
+      
+      const newSubmissions = [...submissions];
+      // 確保該列有足夠的長度來存放第 16 欄 (Index 15)
+      if (!newSubmissions[rowIndex][15]) {
+        newSubmissions[rowIndex][15] = status;
+      } else {
+        newSubmissions[rowIndex][15] = status;
+      }
+      
+      setSubmissions(newSubmissions);
+      alert('審核狀態已更新');
+    } catch (err) {
+      alert('審核失敗');
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
+
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -759,6 +787,7 @@ function App() {
                 {submissions.slice(1).map((row, i) => (
                   <tr key={i}>
                     <td className="action-cell">
+                      <button onClick={() => handleVerifyPayment(i + 1, '通過')} className="edit-btn" style={{background: '#27ae60', color: 'white'}}>付款完成</button>
                       <button onClick={() => startEditSubmission(row, i + 1)} className="edit-btn">修改</button>
                       <button onClick={() => handleDeleteSubmission(i + 1)} className="delete-btn">刪除</button>
                     </td>
@@ -766,7 +795,18 @@ function App() {
                       <td key={j}>
                         {j === 0 && cell && cell.includes('T') 
                           ? formatDateTime(new Date(cell)) 
-                          : cell}
+                          : (j === 15 ? (
+                              <span style={{
+                                padding: '0.3rem 0.8rem', 
+                                borderRadius: '50px', 
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                                background: cell === '通過' ? 'rgba(39, 174, 96, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                                color: cell === '通過' ? '#2ecc71' : '#bbb'
+                              }}>
+                                {cell || '待審核'}
+                              </span>
+                            ) : cell)}
                       </td>
                     ))}
                   </tr>
