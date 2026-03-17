@@ -312,6 +312,18 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   line-height: 1.5;
 }
 
+.conflict-notice {
+  background: rgba(231, 76, 60, 0.1);
+  color: #ff4d4d !important; /* 強制亮紅色 */
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #e74c3c;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
 .radio-group, .checkbox-grid {
   display: flex;
   flex-direction: column;
