@@ -558,117 +558,120 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   backdrop-filter: blur(5px);
 }
 
-/* 管理員登入彈窗風格提升 */
+/* 管理區塊卡片化與一致化 */
+.admin-section {
+  margin-top: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-nav {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+}
+
+.admin-nav button {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-family: 'Noto Serif TC', serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-nav button.active {
+  background: var(--primary-gold);
+  color: black;
+  border-color: var(--primary-gold);
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+}
+
+/* 登入彈窗一致化 */
 .admin-login-modal {
-  background: linear-gradient(145deg, var(--card-bg), #1a252f);
+  background: var(--card-bg);
   padding: 3rem 2rem;
   border-radius: 20px;
   border: 2px solid var(--primary-gold);
   width: 90%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(241, 196, 15, 0.1);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
 }
 
-.admin-login-modal h2 {
-  font-family: 'Noto Serif TC', serif;
-  color: var(--primary-gold);
-  margin-bottom: 2rem;
-  letter-spacing: 2px;
-}
-
-/* 管理後台導覽優化 */
-.admin-nav {
-  margin: 2rem 0;
-  border-bottom: 1px solid rgba(241, 196, 15, 0.2);
-  padding-bottom: 1rem;
-}
-
-.admin-nav button {
-  background: transparent;
-  color: var(--text-muted);
-  border: none;
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
-  font-family: 'Noto Serif TC', serif;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.admin-nav button.active {
-  color: var(--primary-gold);
-  font-weight: bold;
-}
-
-.admin-nav button.active::after {
-  content: "";
-  position: absolute;
-  bottom: -1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 3px;
-  background: var(--primary-gold);
-  box-shadow: 0 0 10px var(--primary-gold);
-}
-
-/* 管理區塊卡片化 */
-.admin-section {
-  background: linear-gradient(145deg, rgba(44, 62, 80, 0.6), rgba(26, 37, 47, 0.8));
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-top: 1rem;
-  border: 1px solid rgba(241, 196, 15, 0.15);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-.admin-section h3 {
-  font-family: 'Noto Serif TC', serif;
-  color: var(--primary-gold);
-  margin-bottom: 2rem;
-  border-left: 4px solid var(--accent-orange);
-  padding-left: 1rem;
-}
-
-/* 表格樣式細緻化 */
+/* 表格樣式優化 */
 .submissions-table {
-  border-radius: 10px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .submissions-table th {
-  background: rgba(0, 0, 0, 0.4) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
   color: var(--primary-gold);
+  padding: 1.2rem 1rem;
+  text-align: left;
   font-family: 'Noto Serif TC', serif;
-  letter-spacing: 1px;
-  font-size: 0.85rem;
   border-bottom: 2px solid var(--accent-orange);
 }
 
 .submissions-table td {
+  padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.9rem;
 }
 
-.submissions-table tr:hover td {
-  background: rgba(241, 196, 15, 0.05);
+/* 修改/刪除按鈕 */
+.action-cell {
+  display: flex;
+  gap: 0.8rem;
 }
 
-/* 修改/刪除按鈕精緻化 */
 .edit-btn, .delete-btn {
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  font-size: 0.8rem;
+  transition: transform 0.2s;
 }
 
 .edit-btn {
-  border: 1px solid var(--primary-gold);
+  background: var(--primary-gold);
+  color: black;
 }
 
 .delete-btn {
-  border: 1px solid #e74c3c;
+  background: #c0392b;
+  color: white;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* 場次列表項目 */
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .edit-form-grid {

@@ -358,30 +358,38 @@ function App() {
         </header>
 
         {adminTab === 'sessions' ? (
-          <section className="admin-section">
-            <h3>目前場次</h3>
+          <section className="admin-section form-card">
+            <h3 className="form-section-title">目前場次管理</h3>
             <div className="session-list">
               {sessions.map(s => (
                 <div key={s.name} className="session-item">
-                  <span>{s.name} - ${s.price}</span>
+                  <span style={{color: 'var(--text-light)'}}>{s.name} - ${s.price}</span>
                   <button onClick={() => handleDeleteSession(s.name)} className="delete-btn">刪除</button>
                 </div>
               ))}
             </div>
             <div className="add-session-form">
-              <h3>新增場次</h3>
-              <input type="text" placeholder="場次名稱" value={newSession.name} onChange={e => setNewSession({...newSession, name: e.target.value})} />
-              <input type="number" placeholder="價格" value={newSession.price} onChange={e => setNewSession({...newSession, price: e.target.value})} />
-              <button onClick={handleAddSession} disabled={isSubmitting}>新增場次</button>
+              <h3 className="form-section-title">新增場次</h3>
+              <div className="form-group">
+                <label>場次名稱</label>
+                <input type="text" placeholder="例如：5/2(六)市集場" value={newSession.name} onChange={e => setNewSession({...newSession, name: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label>價格</label>
+                <input type="number" placeholder="650" value={newSession.price} onChange={e => setNewSession({...newSession, price: e.target.value})} />
+              </div>
+              <button onClick={handleAddSession} disabled={isSubmitting} className="submit-btn" style={{width: '100%', marginTop: '1rem'}}>
+                確認新增場次
+              </button>
             </div>
           </section>
         ) : (
-          <section className="admin-section submissions-table-container">
+          <section className="admin-section form-card submissions-table-container">
             <div className="admin-section-header">
-              <h3>報名清單 (共 {totalRows} 筆)</h3>
+              <h3 className="form-section-title" style={{margin: 0}}>報名清單 (共 {totalRows} 筆)</h3>
               <div className="pagination">
                 <button onClick={() => loadPage(currentPage - 1)} disabled={currentPage === 1 || isDataLoading}>上一頁</button>
-                <span>第 {currentPage} 頁 / 共 {Math.ceil(totalRows / 50)} 頁</span>
+                <span className="copy" style={{color: 'var(--primary-gold)'}}>第 {currentPage} 頁 / 共 {Math.ceil(totalRows / 50)} 頁</span>
                 <button onClick={() => loadPage(currentPage + 1)} disabled={currentPage >= Math.ceil(totalRows / 50) || isDataLoading}>下一頁</button>
               </div>
             </div>
