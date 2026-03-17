@@ -155,15 +155,17 @@ function App() {
   const handleDeleteSession = async (name: string) => {
     if (!window.confirm(`確定要刪除場次「${name}」嗎？`)) return;
     try {
-      await fetch(GOOGLE_SCRIPT_URL, {
+      const res = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({ action: 'deleteSession', pw: adminPassword, name })
       });
+      // 由於 no-cors 無法讀取內容，我們假設送出即成功並更新 UI
       setSessions(prev => prev.filter(s => s.name !== name));
-      alert('已刪除');
+      alert('刪除要求已送出');
     } catch (err) {
-      alert('刪除失敗');
+      console.error('刪除失敗:', err);
+      alert('刪除失敗，請檢查網路連線');
     }
   };
 
