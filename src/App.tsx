@@ -305,6 +305,8 @@ function App() {
     }
   };
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
@@ -378,9 +380,14 @@ function App() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmSubmit = async () => {
     setIsSubmitting(true);
+    setShowConfirmation(false);
 
     const bankLast5 = formData.paymentMethod === '銀行轉帳/ATM' ? formData.bankLast5 : '無';
     const submissionData: any = {
@@ -686,6 +693,35 @@ function App() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showConfirmation && (
+        <div className="modal-overlay">
+          <div className="admin-login-modal form-card" style={{maxWidth: '600px', width: '90%'}}>
+            <h2 className="form-section-title">確認報名資訊</h2>
+            <div className="confirmation-details" style={{textAlign: 'left', marginBottom: '2rem', lineHeight: '1.8'}}>
+              <p><strong>報名人：</strong>{formData.name}</p>
+              <p><strong>聯絡電話：</strong>{formData.phone}</p>
+              <p><strong>Email：</strong>{formData.email}</p>
+              <p><strong>場次：</strong>{formData.session}</p>
+              <p><strong>份數：</strong>{formData.quantity} 份</p>
+              <p><strong>當天遊玩人數：</strong>{formData.players} 人</p>
+              <p><strong>預計遊玩日期時間：</strong>{formData.pickupTime}</p>
+              <p><strong>領取地點：</strong>{formData.pickupLocation}</p>
+              <p><strong>付款方式：</strong>{formData.paymentMethod.split(' (')[0]}</p>
+              <p><strong>估計總額：</strong><span style={{color: 'var(--primary-gold)', fontWeight: 'bold', fontSize: '1.2rem'}}>NT$ {calculatedTotal}</span></p>
+              {formData.notes && <p><strong>備註：</strong>{formData.notes}</p>}
+            </div>
+            <div className="modal-actions admin-login-actions">
+              <button type="button" onClick={() => setShowConfirmation(false)} className="cancel-btn">
+                返回修改
+              </button>
+              <button type="button" onClick={handleConfirmSubmit} className="submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? '正在送出...' : '確認送出'}
+              </button>
+            </div>
           </div>
         </div>
       )}
