@@ -1294,14 +1294,14 @@ function App() {
                   </g>
                 </g>
 
-                {/* 前腿組 */}
+                {/* 前腿組 - 改為長條形 */}
                 <g className="bunny-leg-front">
-                  <ellipse cx="80" cy="85" rx="10" ry="5" fill="white" />
+                  <rect x="75" y="80" width="18" height="6" rx="3" fill="white" />
                 </g>
 
-                {/* 後腿組 (長腿爆發) */}
+                {/* 後腿組 - 大長腿爆發 */}
                 <g className="bunny-leg-back">
-                  <ellipse cx="30" cy="82" rx="16" ry="8" fill="white" />
+                  <rect x="15" y="78" width="28" height="8" rx="4" fill="white" />
                 </g>
               </g>
             </svg>
