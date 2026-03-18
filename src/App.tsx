@@ -46,6 +46,21 @@ function App() {
   const [loadTime] = useState(Date.now()); // 紀錄頁面載入時間
   const [adminFilterDate, setAdminFilterDate] = useState<Date | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: number, direction: 'asc' | 'desc' } | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<number[]>([]);
+  const [showColumnFilter, setShowShowColumnFilter] = useState(false);
+
+  // 初始化可見欄位 (預設全選)
+  useEffect(() => {
+    if (submissions.length > 0 && visibleColumns.length === 0) {
+      setVisibleColumns(submissions[0].map((_, i) => i));
+    }
+  }, [submissions]);
+
+  const toggleColumn = (index: number) => {
+    setVisibleColumns(prev => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index].sort((a, b) => a - b)
+    );
+  };
 
   // 請在此處填入您部署後的 Google Apps Script URL
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOdLH2XHxJR7wEcCJYsPne_ZjciEPBKbZr7OmaafuG3l1VQrUtLzhlD2aADa-gOSZ1/exec';
@@ -789,6 +804,41 @@ function App() {
                       清除篩選
                     </button>
                   )}
+                  
+                  <div className="column-filter-container" style={{position: 'relative', marginLeft: 'auto'}}>
+                    <button 
+                      onClick={() => setShowShowColumnFilter(!showColumnFilter)} 
+                      className="edit-btn" 
+                      style={{background: '#444', border: '1px solid #666', fontSize: '0.8rem'}}
+                    >
+                      ⚙️ 顯示欄位設定
+                    </button>
+                    {showColumnFilter && (
+                      <div className="column-filter-dropdown" style={{
+                        position: 'absolute', top: '100%', right: 0, zIndex: 100,
+                        background: '#222', border: '1px solid #444', borderRadius: '8px',
+                        padding: '1rem', width: '200px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                        marginTop: '0.5rem'
+                      }}>
+                        <h4 style={{margin: '0 0 0.8rem 0', fontSize: '0.9rem', color: 'var(--primary-gold)'}}>勾選欲顯示欄位</h4>
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto'}}>
+                          {submissions[0]?.map((h: any, i: number) => (
+                            <label key={i} style={{display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', cursor: 'pointer', color: '#ccc'}}>
+                              <input type="checkbox" checked={visibleColumns.includes(i)} onChange={() => toggleColumn(i)} />
+                              {h}
+                            </label>
+                          ))}
+                        </div>
+                        <button 
+                          onClick={() => setShowShowColumnFilter(false)} 
+                          className="submit-btn" 
+                          style={{width: '100%', marginTop: '1rem', padding: '0.4rem', fontSize: '0.8rem'}}
+                        >
+                          完成
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               {!adminFilterDate && (
@@ -803,7 +853,7 @@ function App() {
               <thead>
                 <tr>
                   <th>操作</th>
-                  {submissions[0]?.map((h: any, i: number) => (
+                  {submissions[0]?.map((h: any, i: number) => visibleColumns.includes(i) && (
                     <th key={i}>
                       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         {h}
@@ -827,7 +877,7 @@ function App() {
                       <button onClick={() => startEditSubmission(row, i + 1)} className="edit-btn">修改</button>
                       <button onClick={() => handleDeleteSubmission(i + 1)} className="delete-btn">刪除</button>
                     </td>
-                    {row.map((cell: any, j: number) => (
+                    {row.map((cell: any, j: number) => visibleColumns.includes(j) && (
                       <td key={j}>
                         {j === 0 && cell && cell.includes('T') 
                           ? formatDateTime(new Date(cell)) 
