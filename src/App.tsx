@@ -1278,7 +1278,7 @@ function App() {
                     }
                   }}
                 >
-                  <option value="">-------請選擇場次類型--------</option>
+                  <option value="" disabled>-------請選擇場次類型--------</option>
                   <option value="一般預約">📅 一般預約 (自由選擇遊玩時段)</option>
                   <option value="特別預約">✨ 特別預約 (固定日期與特定時段)</option>
                 </select>
