@@ -97,53 +97,56 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
-  // 1. 初始載入場次 (加入快取與 Loading 邏輯)
+  // 1. 初始載入場次 (優化效能版：減少渲染、精準計時)
   useEffect(() => {
     const fetchSessions = async () => {
       console.time('🚀 [Performance] 初始載入場次 (fetchSessions)');
-      const startTime = Date.now();
       
-      // 嘗試從快取讀取
-      const cachedSessions = localStorage.getItem('bagua_maze_sessions');
-      if (cachedSessions) {
+      // 1. 優先從快取讀取
+      const cached = localStorage.getItem('bagua_maze_sessions');
+      let currentSessions: any[] = [];
+      
+      if (cached) {
         try {
-          const parsed = JSON.parse(cachedSessions);
-          setSessions(parsed);
-          setIsInitialLoading(false); // 如果有快取，先關閉 Loading
-          console.log('📦 [Cache] 已從快取載入場次資料');
+          currentSessions = JSON.parse(cached);
+          setSessions(currentSessions);
+          setIsInitialLoading(false);
+          console.log('📦 [Cache] 已從快取快速載入');
         } catch (e) {
           console.error('❌ 快取解析失敗');
         }
       }
 
       try {
+        const apiStartTime = Date.now();
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
-        const data = await res.json();
-        const duration = Date.now() - startTime;
+        const newData = await res.json();
+        const apiDuration = Date.now() - apiStartTime;
         
-        console.log(`📊 [Debug] 收到場次資料筆數: ${Array.isArray(data) ? data.length : 0} 筆`);
-        console.log(`⏱️ [Debug] API 耗時: ${duration}ms`);
+        console.log(`⏱️ [Debug] 純網絡請求耗時: ${apiDuration}ms`);
 
-        if (Array.isArray(data) && data.length > 0) {
-          setSessions(data);
-          // 存入快取
-          localStorage.setItem('bagua_maze_sessions', JSON.stringify(data));
+        if (Array.isArray(newData) && newData.length > 0) {
+          // 2. 只有當資料真的有變動時才更新 sessions 狀態
+          const isDataChanged = JSON.stringify(newData) !== JSON.stringify(currentSessions);
           
-          const first = data[0];
-          const times = first.fixedTime ? first.fixedTime.split(',') : [];
-          const autoTime = (first.fixedDate && times.length === 1) ? `${first.fixedDate} ${times[0]}` : '';
-          
-          setFormData(prev => ({ 
-            ...prev, 
-            session: first.name,
-            pickupTime: autoTime
-          }));
-        } else {
-          if (!cachedSessions) setSessions([{ name: '暫無開放場次，請洽管理員', price: 0 }]);
+          if (isDataChanged) {
+            setSessions(newData);
+            localStorage.setItem('bagua_maze_sessions', JSON.stringify(newData));
+            
+            // 3. 預設場次設定
+            const first = newData[0];
+            const times = first.fixedTime ? first.fixedTime.split(',') : [];
+            const autoTime = (first.fixedDate && times.length === 1) ? `${first.fixedDate} ${times[0]}` : '';
+            
+            setFormData(prev => ({ 
+              ...prev, 
+              session: first.name,
+              pickupTime: autoTime
+            }));
+          }
         }
       } catch (err) {
-        console.error('❌ [Error] 無法載入場次:', err);
-        if (!cachedSessions) setSessions([{ name: '載入場次失敗，請重新整理', price: 0 }]);
+        console.error('❌ [Error] 無法更新場次:', err);
       } finally {
         setIsInitialLoading(false);
         console.timeEnd('🚀 [Performance] 初始載入場次 (fetchSessions)');
