@@ -8,6 +8,7 @@ function App() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string}[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // 新增：初始載入狀態
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -78,11 +79,25 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
-  // 1. 初始載入場次
+  // 1. 初始載入場次 (加入快取與 Loading 邏輯)
   useEffect(() => {
     const fetchSessions = async () => {
       console.time('🚀 [Performance] 初始載入場次 (fetchSessions)');
       const startTime = Date.now();
+      
+      // 嘗試從快取讀取
+      const cachedSessions = localStorage.getItem('bagua_maze_sessions');
+      if (cachedSessions) {
+        try {
+          const parsed = JSON.parse(cachedSessions);
+          setSessions(parsed);
+          setIsInitialLoading(false); // 如果有快取，先關閉 Loading
+          console.log('📦 [Cache] 已從快取載入場次資料');
+        } catch (e) {
+          console.error('❌ 快取解析失敗');
+        }
+      }
+
       try {
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
         const data = await res.json();
@@ -93,6 +108,9 @@ function App() {
 
         if (Array.isArray(data) && data.length > 0) {
           setSessions(data);
+          // 存入快取
+          localStorage.setItem('bagua_maze_sessions', JSON.stringify(data));
+          
           const first = data[0];
           const times = first.fixedTime ? first.fixedTime.split(',') : [];
           const autoTime = (first.fixedDate && times.length === 1) ? `${first.fixedDate} ${times[0]}` : '';
@@ -103,12 +121,13 @@ function App() {
             pickupTime: autoTime
           }));
         } else {
-          setSessions([{ name: '暫無開放場次，請洽管理員', price: 0 }]);
+          if (!cachedSessions) setSessions([{ name: '暫無開放場次，請洽管理員', price: 0 }]);
         }
       } catch (err) {
         console.error('❌ [Error] 無法載入場次:', err);
-        setSessions([{ name: '載入場次失敗，請重新整理', price: 0 }]);
+        if (!cachedSessions) setSessions([{ name: '載入場次失敗，請重新整理', price: 0 }]);
       } finally {
+        setIsInitialLoading(false);
         console.timeEnd('🚀 [Performance] 初始載入場次 (fetchSessions)');
       }
     };
@@ -932,6 +951,25 @@ function App() {
             </table>
           </section>
         )}
+      </div>
+    );
+  }
+
+  if (isInitialLoading && sessions.length === 0) {
+    return (
+      <div className="container">
+        <div className="loading-screen" style={{
+          height: '80vh', display: 'flex', flexDirection: 'column', 
+          alignItems: 'center', justifyContent: 'center', color: 'var(--primary-gold)'
+        }}>
+          <div className="loading-spinner" style={{
+            width: '50px', height: '50px', border: '3px solid rgba(212, 175, 55, 0.3)',
+            borderTop: '3px solid var(--primary-gold)', borderRadius: '50%',
+            animation: 'spin 1s linear infinite', marginBottom: '1.5rem'
+          }}></div>
+          <p style={{fontSize: '1.2rem', letterSpacing: '2px'}}>正在開啟八卦時空...</p>
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
       </div>
     );
   }
