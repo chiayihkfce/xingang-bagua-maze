@@ -50,6 +50,17 @@ function App() {
   const [visibleColumns, setVisibleColumns] = useState<number[]>([]);
   const [showColumnFilter, setShowShowColumnFilter] = useState(false);
 
+  // 當份數改變時，確保遊玩人數不會超過上限 (份數 * 4)
+  useEffect(() => {
+    const qty = parseInt(formData.quantity) || 1;
+    const players = parseInt(formData.players) || 0;
+    const maxPlayers = qty * 4;
+    
+    if (players > maxPlayers || players === 0) {
+      setFormData(prev => ({ ...prev, players: '1' }));
+    }
+  }, [formData.quantity]);
+
   // 初始化可見欄位 (預設全選)
   useEffect(() => {
     if (submissions.length > 0 && visibleColumns.length === 0) {
