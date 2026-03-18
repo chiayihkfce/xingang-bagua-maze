@@ -1284,47 +1284,45 @@ function App() {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>【詳細場次】 *</label>
-                {sessionType === '一般預約' ? (
-                  <div className="general-session-info" style={{ 
-                    padding: '1rem', 
-                    background: 'rgba(212, 175, 55, 0.1)', 
-                    border: '1px solid var(--primary-gold)', 
-                    borderRadius: '8px',
-                    color: 'var(--primary-gold)',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.6'
-                  }}>
-                    <p style={{ margin: 0, fontWeight: 'bold' }}>
-                      ⚡ 系統已自動選定：{formData.session || '正在計算中...'}
-                    </p>
-                    <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
-                      ★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!
+              {/* 只有在選了類型後才顯示詳細場次區塊 */}
+              {sessionType !== '' && (
+                <div className="form-group">
+                  <label>【詳細場次】 *</label>
+                  {sessionType === '一般預約' ? (
+                    <div className="general-session-info" style={{ 
+                      padding: '1rem', 
+                      background: 'rgba(212, 175, 55, 0.1)', 
+                      border: '1px solid var(--primary-gold)', 
+                      borderRadius: '8px',
+                      color: 'var(--primary-gold)',
+                      fontSize: '0.95rem',
+                      lineHeight: '1.6'
+                    }}>
+                      <p style={{ margin: 0, fontWeight: 'bold' }}>
+                        ⚡ 系統已自動選定：{formData.session || '正在計算中...'}
+                      </p>
+                      <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
+                        ★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <select 
-                    name="session" 
-                    value={formData.session} 
-                    onChange={handleInputChange}
-                    disabled={sessionType === ''}
-                    required
-                  >
-                    {sessionType === '' ? (
-                      <option value="">請先選擇場次類型</option>
-                    ) : (
-                      sessions.length > 0 ? (
+                  ) : (
+                    <select 
+                      name="session" 
+                      value={formData.session} 
+                      onChange={handleInputChange}
+                      required
+                    >
+                      {sessions.length > 0 ? (
                         sessions
                           .filter(s => (s.fixedDate || s.fixedTime))
                           .map(s => <option key={s.name} value={s.name}>{s.name} (${s.price})</option>)
                       ) : (
                         <option disabled>載入中...</option>
-                      )
-                    )}
-                  </select>
-                )}
-              </div>
+                      )}
+                    </select>
+                  )}
+                </div>
+              )}
               <div className="form-group">
                 <label>份數 *</label>
                 <input type="number" name="quantity" min="1" required value={formData.quantity} onChange={handleInputChange} />
