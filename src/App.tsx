@@ -103,7 +103,7 @@ function App() {
 
   // 1. 初始載入場次 (優化進場動畫邏輯)
   useEffect(() => {
-    const minEntryTime = 2500; // 最短動畫時間 2.5 秒
+    const minEntryTime = 1200; // 最短動畫時間 1.2 秒
     const startTime = Date.now();
     
     const fetchSessions = async () => {
