@@ -1285,14 +1285,21 @@ function App() {
             </g>
             {/* 頭部 */}
             <circle cx="75" cy="45" r="18" fill="white" />
-            {/* 耳朵組 - 加長耳朵路徑 */}
+            
+            {/* 鬍鬚組 */}
+            <g className="bunny-whiskers" stroke="#DDD" strokeWidth="1" strokeLinecap="round">
+              <line x1="85" y1="50" x2="95" y2="48" />
+              <line x1="85" y1="52" x2="95" y2="54" />
+            </g>
+
+            {/* 耳朵組 - 拉長並微調位置避免穿臉 */}
             <g className="bunny-ears-group">
-              {/* 耳朵 - 左 (拉長) */}
-              <path d="M65 35C55 0 68 -5 72 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
-              <path d="M65 35C58 5 66 2 70 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
-              {/* 耳朵 - 右 (拉長) */}
-              <path d="M82 35C88 -5 98 0 88 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
-              <path d="M82 35C88 5 94 8 88 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+              {/* 耳朵 - 左 */}
+              <path d="M68 32C60 -5 72 -10 74 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+              <path d="M68 32C63 0 70 -3 72 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
+              {/* 耳朵 - 右 */}
+              <path d="M80 32C86 -10 98 -5 88 30" stroke="white" strokeWidth="8" strokeLinecap="round" />
+              <path d="M80 32C86 0 94 3 88 30" stroke="#FFD1DC" strokeWidth="4" strokeLinecap="round" />
             </g>
             {/* 眼睛 */}
             <circle cx="82" cy="42" r="2.5" fill="#E74C3C" />

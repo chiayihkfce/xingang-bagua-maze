@@ -1268,6 +1268,17 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   transform-origin: 35px 85px; /* 設定在與身體連接處 */
 }
 
+/* 鬍鬚顫動動畫 */
+.bunny-whiskers {
+  animation: whiskerTremble 0.8s infinite;
+  transform-origin: 85px 50px;
+}
+
+@keyframes whiskerTremble {
+  0%, 100% { transform: rotate(0); }
+  40% { transform: rotate(3deg); }
+}
+
 @keyframes frontLeg {
   0%, 100% { transform: translateY(0) rotate(0); }
   40% { transform: translateY(-3px) rotate(15deg); } /* 縮腳但限制位移 */
@@ -1301,15 +1312,6 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   border-radius: 50%;
   filter: blur(2px);
   animation: shadowScale 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
-
-@keyframes bunnyHopping {
-  0%, 100% { 
-    transform: translateY(0) scaleY(0.85) scaleX(1.1); 
-  }
-  40% { 
-    transform: translateY(-60px) scaleY(1.1) scaleX(0.9); 
-  }
 }
 
 @keyframes shadowScale {
