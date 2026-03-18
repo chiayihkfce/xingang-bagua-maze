@@ -1,10 +1,80 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import gsap from 'gsap'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 
 function App() {
   // --- 1. 狀態與變數定義 ---
+  const bunnyRef = useRef<HTMLDivElement>(null);
+  const earRef = useRef<SVGGElement>(null);
+  const legRef = useRef<SVGGElement>(null);
+  const bodyRef = useRef<SVGGElement>(null);
+
+  // GSAP 核心動畫邏輯
+  useEffect(() => {
+    if (!bunnyRef.current || !earRef.current || !legRef.current || !bodyRef.current) return;
+
+    const tl = gsap.timeline({ repeat: -1 });
+
+    // 1. 起跳階段 (Anticipation to Launch)
+    tl.to(bunnyRef.current, {
+      duration: 0.6,
+      y: -100,           // 向上跳
+      rotation: 15,      // 【起跳前傾】
+      ease: "power2.out"
+    })
+    .to(earRef.current, {
+      duration: 0.6,
+      rotation: -30,     // 【耳朵隨動】風阻貼頸
+      delay: -0.6
+    })
+    .to(legRef.current, {
+      duration: 0.6,
+      scaleY: 1.6,       // 【強力蹬地】拉伸
+      rotation: 45,
+      delay: -0.6
+    })
+    .to(bodyRef.current, {
+      duration: 0.6,
+      scaleX: 1.3,       // 脊椎拉伸
+      delay: -0.6
+    })
+    
+    // 2. 落地俯衝階段 (Apex to Impact)
+    .to(bunnyRef.current, {
+      duration: 0.5,
+      y: 0,
+      rotation: -20,     // 【落地俯衝】頭部下壓
+      ease: "power2.in"
+    })
+    .to(earRef.current, {
+      duration: 0.5,
+      rotation: 35,      // 【落地慣性】耳朵向前甩
+      delay: -0.5
+    })
+    .to(legRef.current, {
+      duration: 0.5,
+      scaleY: 0.8,       // 落地跨越預備
+      rotation: -45,
+      delay: -0.5
+    })
+    .to(bodyRef.current, {
+      duration: 0.5,
+      scaleX: 0.9,       // 落地壓縮
+      delay: -0.5
+    })
+    
+    // 3. 恢復與重置 (Recovery)
+    .to(bunnyRef.current, {
+      duration: 0.3,
+      rotation: 0,
+      ease: "back.out(1.7)"
+    });
+
+    return () => { tl.kill(); }; // 清除動畫防止記憶體洩漏
+  }, []);
+
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string}[]>([]);
