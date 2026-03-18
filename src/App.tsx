@@ -83,11 +83,18 @@ function App() {
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00'
   ];
 
-  const formatDateTime = (date: Date) => {
-    const pad = (n: number) => String(n).padStart(2, '0');
-    // 統一格式為 2026-03-11 13:26:05
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  // 格式 A: 2026-03-11 13:26:05 (用於時間戳記)
+  const formatFullDateTime = (date: Date) => {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
            `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  // 格式 B: 2026-03-14 14:00 (用於預計遊玩時間)
+  const formatDateTimeMinute = (date: Date) => {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
   // 1. 初始載入場次 (加入快取與 Loading 邏輯)
