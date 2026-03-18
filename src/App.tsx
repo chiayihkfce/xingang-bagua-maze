@@ -105,6 +105,22 @@ function App() {
   useEffect(() => {
     const minEntryTime = 1200; // 最短動畫時間 1.2 秒
     const startTime = Date.now();
+    let isTransitionStarted = false; // 防止重複觸發退場
+
+    const triggerExitAnimation = () => {
+      if (isTransitionStarted) return;
+      isTransitionStarted = true;
+      
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minEntryTime - elapsedTime);
+      
+      setTimeout(() => {
+        setIsEntryAnimating(false); // 觸發 CSS 退場動畫
+        setTimeout(() => {
+          setShouldRenderEntry(false);
+        }, 800);
+      }, remainingTime);
+    };
     
     const fetchSessions = async () => {
       console.time('🚀 [Performance] 初始載入場次');
@@ -113,7 +129,10 @@ function App() {
       const cached = localStorage.getItem('bagua_maze_sessions');
       if (cached) {
         try {
-          setSessions(JSON.parse(cached));
+          const parsed = JSON.parse(cached);
+          setSessions(parsed);
+          // 重要：如果有快取，且已經過了最小等待時間，就直接進場 (背景繼續抓更新)
+          triggerExitAnimation();
         } catch (e) { console.error('❌ 快取解析失敗'); }
       }
 
@@ -127,19 +146,8 @@ function App() {
       } catch (err) {
         console.error('❌ [Error] 無法更新場次:', err);
       } finally {
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, minEntryTime - elapsedTime);
-        
-        // 等待剩餘的動畫時間後，執行退場動畫
-        setTimeout(() => {
-          setIsEntryAnimating(false); // 觸發 CSS 退場動畫
-          
-          // 等待 CSS 動畫結束 (0.8s) 後徹底移除組件
-          setTimeout(() => {
-            setShouldRenderEntry(false);
-          }, 800);
-        }, remainingTime);
-        
+        // 無論成功失敗，或是沒有快取，最後都要確保動畫關閉
+        triggerExitAnimation();
         console.timeEnd('🚀 [Performance] 初始載入場次');
       }
     };
