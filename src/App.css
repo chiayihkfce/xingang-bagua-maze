@@ -568,23 +568,168 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   }
 }
 
-/* Loading 動畫 */
-.loading-overlay {
-  margin: 1.5rem 0;
+/* Thematic Loading Screen */
+.thematic-loading {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.bagua-spinner-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.bagua-spinner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: baguaRotate 20s linear infinite;
+}
+
+.trigram {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 10px;
+  margin-left: -15px;
+  margin-top: -5px;
+  background: var(--primary-gold);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--primary-gold);
+  transform: rotate(calc(var(--i) * 45deg)) translateY(-80px);
+  opacity: 0.8;
+}
+
+/* 模擬不同卦象的虛實線 */
+.trigram::before, .trigram::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: inherit;
+  border-radius: inherit;
+  box-shadow: inherit;
+}
+
+.trigram::before { top: -8px; }
+.trigram::after { top: 8px; }
+
+/* 讓偶數卦象中間斷開 (模擬陰爻) */
+.trigram-1, .trigram-3, .trigram-5, .trigram-7 {
+  background: transparent;
+  box-shadow: none;
+}
+.trigram-1::before, .trigram-1::after,
+.trigram-3::before, .trigram-3::after,
+.trigram-5::before, .trigram-5::after,
+.trigram-7::before, .trigram-7::after,
+.trigram-1::before {
+  background: linear-gradient(90deg, var(--primary-gold) 40%, transparent 40%, transparent 60%, var(--primary-gold) 60%);
+}
+
+.bagua-center {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: #000;
+  border-radius: 50%;
+  border: 2px solid var(--primary-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
+  z-index: 2;
+}
+
+.taiji {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #fff 50%, #000 50%);
+  border-radius: 50%;
+  position: relative;
+  animation: taijiRotate 4s linear infinite;
+}
+
+.taiji::before, .taiji::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  left: 25%;
+  border-radius: 50%;
+}
+
+.taiji::before {
+  top: 0;
+  background: #fff;
+  background-image: radial-gradient(circle, #000 20%, transparent 20%);
+}
+
+.taiji::after {
+  bottom: 0;
+  background: #000;
+  background-image: radial-gradient(circle, #fff 20%, transparent 20%);
+}
+
+.loading-glow {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(241, 196, 15, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.loading-text-container {
+  text-align: center;
+  animation: textFadeIn 2s ease-out forwards;
+}
+
+.loading-main-text {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.8rem;
   color: var(--primary-gold);
-  font-weight: bold;
+  letter-spacing: 8px;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
 }
 
-.loading-overlay::after {
-  content: "...";
-  animation: loading dots 1.5s infinite;
+.loading-sub-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  margin-top: 1rem;
+  opacity: 0.7;
 }
 
-@keyframes dots {
-  0%, 20% { content: "."; }
-  40% { content: ".."; }
-  60% { content: "..."; }
-  80%, 100% { content: ""; }
+@keyframes baguaRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes taijiRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+}
+
+@keyframes textFadeIn {
+  from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
 .modal-overlay {

@@ -1102,17 +1102,23 @@ function App() {
   if (isInitialLoading && sessions.length === 0) {
     return (
       <div className="container">
-        <div className="loading-screen" style={{
-          height: '80vh', display: 'flex', flexDirection: 'column', 
-          alignItems: 'center', justifyContent: 'center', color: 'var(--primary-gold)'
-        }}>
-          <div className="loading-spinner" style={{
-            width: '50px', height: '50px', border: '3px solid rgba(212, 175, 55, 0.3)',
-            borderTop: '3px solid var(--primary-gold)', borderRadius: '50%',
-            animation: 'spin 1s linear infinite', marginBottom: '1.5rem'
-          }}></div>
-          <p style={{fontSize: '1.2rem', letterSpacing: '2px'}}>正在開啟八卦時空...</p>
-          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        <div className="loading-screen thematic-loading">
+          <div className="bagua-spinner-container">
+            <div className="bagua-spinner">
+              {/* 八卦符號圖案：用 CSS 或簡單形狀模擬 */}
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className={`trigram trigram-${i}`} style={{ '--i': i } as any}></div>
+              ))}
+              <div className="bagua-center">
+                <div className="taiji"></div>
+              </div>
+            </div>
+            <div className="loading-glow"></div>
+          </div>
+          <div className="loading-text-container">
+            <p className="loading-main-text">正在開啟八卦時空</p>
+            <p className="loading-sub-text">穿越清朝與昭和的交界...</p>
+          </div>
         </div>
       </div>
     );
