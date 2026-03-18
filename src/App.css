@@ -1258,30 +1258,30 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   animation: bunnyHopping 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
 
-/* 腳部獨立動畫 - 蹬地感 */
-.bunny-f-foot { animation: frontLeg 0.8s infinite; }
-.bunny-b-leg { animation: backLeg 0.8s infinite; }
-.bunny-ears-group { animation: earWiggle 0.8s infinite; }
+/* 腳部獨立動畫 - 確保不分離 */
+.bunny-f-foot { 
+  animation: frontLeg 0.8s infinite; 
+  transform-origin: 70px 85px; /* 設定在與身體連接處 */
+}
+.bunny-b-leg { 
+  animation: backLeg 0.8s infinite; 
+  transform-origin: 35px 85px; /* 設定在與身體連接處 */
+}
 
 @keyframes frontLeg {
-  0%, 100% { transform: translateY(0); }
-  40% { transform: translateY(2px) translateX(-2px) rotate(10deg); }
+  0%, 100% { transform: translateY(0) rotate(0); }
+  40% { transform: translateY(-3px) rotate(15deg); } /* 縮腳但限制位移 */
 }
 
 @keyframes backLeg {
-  0%, 100% { transform: scaleY(1); }
-  5% { transform: scaleY(1.6) translateY(2px); } /* 蹬地瞬間 */
-  40% { transform: scaleY(0.7) translateY(-2px); } /* 空中縮起 */
-}
-
-@keyframes earWiggle {
-  0%, 100% { transform: rotate(0); }
-  40% { transform: rotate(-5deg) scaleY(1.1); }
+  0%, 100% { transform: scaleY(1) translateY(0); }
+  5% { transform: scaleY(1.4) translateY(2px); } /* 蹬地 */
+  40% { transform: scaleY(0.8) translateY(-4px); } /* 隨身體上移 */
 }
 
 @keyframes bunnyHopping {
-  0%, 100% { transform: translateY(0) scaleY(0.8); }
-  40% { transform: translateY(-60px) scaleY(1.05); }
+  0%, 100% { transform: translateY(0) scaleY(0.85); }
+  40% { transform: translateY(-60px) scaleY(1.02); }
 }
 
 .bunny-svg {
