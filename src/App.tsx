@@ -862,39 +862,54 @@ function App() {
                   <label>價格</label>
                   <input type="number" placeholder="650" value={newSession.price} onChange={e => setNewSession({...newSession, price: e.target.value})} />
                 </div>
-                <div className="form-group">
-                  <label>固定日期 (非強選場次請留空)</label>
-                  <DatePicker
-                    selected={newSession.fixedDate ? new Date(newSession.fixedDate) : null}
-                    onChange={(date: Date | null) => {
-                      if (date) {
-                        const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                        setNewSession({...newSession, fixedDate: formatted});
-                      } else {
-                        setNewSession({...newSession, fixedDate: ''});
-                      }
-                    }}
-                    dateFormat="yyyy-MM-dd"
-                    className="date-picker-input"
-                    placeholderText="點擊選擇日期"
-                    isClearable
-                  />
-                </div>
                 <div className="form-group" style={{gridColumn: '1 / -1'}}>
-                  <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
-                  <div className="time-slot-grid">
-                    {TIME_SLOTS.map(t => (
-                      <button 
-                        key={t} 
-                        type="button"
-                        className={`time-slot-btn ${newSession.fixedTime.split(',').includes(t) ? 'active' : ''}`}
-                        onClick={() => toggleFixedTime(t, false)}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
+                  <label>場次分組 (決定儲存分頁) *</label>
+                  <select 
+                    value={newSession.isSpecial ? 'special' : 'general'} 
+                    onChange={e => setNewSession({...newSession, isSpecial: e.target.value === 'special'})}
+                    style={{width: '100%', padding: '0.8rem', borderRadius: '4px', background: '#444', color: 'white', border: '1px solid #666'}}
+                  >
+                    <option value="general">📅 一般預約場次 (存入「一般場次」分頁)</option>
+                    <option value="special">✨ 固定特別場次 (存入「特別場次」分頁)</option>
+                  </select>
                 </div>
+                {newSession.isSpecial && (
+                  <>
+                    <div className="form-group">
+                      <label>固定日期</label>
+                      <DatePicker
+                        selected={newSession.fixedDate ? new Date(newSession.fixedDate) : null}
+                        onChange={(date: Date | null) => {
+                          if (date) {
+                            const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                            setNewSession({...newSession, fixedDate: formatted});
+                          } else {
+                            setNewSession({...newSession, fixedDate: ''});
+                          }
+                        }}
+                        dateFormat="yyyy-MM-dd"
+                        className="date-picker-input"
+                        placeholderText="點擊選擇日期"
+                        isClearable
+                      />
+                    </div>
+                    <div className="form-group" style={{gridColumn: '1 / -1'}}>
+                      <label>固定開放時段 (可多選，不選則代表全時段開放)</label>
+                      <div className="time-slot-grid">
+                        {TIME_SLOTS.map(t => (
+                          <button 
+                            key={t} 
+                            type="button"
+                            className={`time-slot-btn ${newSession.fixedTime.split(',').includes(t) ? 'active' : ''}`}
+                            onClick={() => toggleFixedTime(t, false)}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               <button onClick={handleAddSession} disabled={isSubmitting} className="submit-btn" style={{width: '100%', marginTop: '1rem'}}>
                 確認新增場次
