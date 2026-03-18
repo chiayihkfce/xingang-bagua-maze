@@ -1294,14 +1294,14 @@ function App() {
                   </g>
                 </g>
 
-                {/* 前腿組 - 改為長條形 */}
+                {/* 前腿組 - 再拉近一點 */}
                 <g className="bunny-leg-front">
-                  <rect x="75" y="80" width="18" height="6" rx="3" fill="white" />
+                  <rect x="75" y="72" width="18" height="6" rx="3" fill="white" />
                 </g>
 
-                {/* 後腿組 - 大長腿爆發 */}
+                {/* 後腿組 - 再拉近一點 */}
                 <g className="bunny-leg-back">
-                  <rect x="15" y="78" width="28" height="8" rx="4" fill="white" />
+                  <rect x="15" y="70" width="28" height="8" rx="4" fill="white" />
                 </g>
               </g>
             </svg>
