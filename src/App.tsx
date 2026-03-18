@@ -145,14 +145,17 @@ function App() {
       }
 
       try {
+        console.log('🌐 [Network] 正在從 GAS 抓取資料...', `${GOOGLE_SCRIPT_URL}?action=getSessions`);
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
+        console.log('📡 [Network] 回應狀態:', res.status);
         const newData = await res.json();
+        console.log('✅ [Network] 抓取成功，資料筆數:', newData.length);
         if (Array.isArray(newData) && newData.length > 0) {
           setSessions(newData);
           localStorage.setItem('bagua_maze_sessions', JSON.stringify(newData));
         }
       } catch (err) {
-        console.error('❌ [Error] 無法更新場次:', err);
+        console.error('❌ [Error] 抓取失敗，原因:', err);
       } finally {
         // 無論成功失敗，或是沒有快取，最後都要確保動畫關閉
         triggerExitAnimation();
