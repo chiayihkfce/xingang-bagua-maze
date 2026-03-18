@@ -1267,51 +1267,60 @@ function App() {
         </div>
       )}
 
-      {/* 萌系小白兔裝飾 */}
+      {/* 萌系小白兔裝飾 - 靈魂動態版 */}
       <div className="bunny-container">
         <div className="bunny-sprite">
           <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', height: '100%'}}>
             {/* 身體 - 圓圓胖胖 */}
             <circle cx="50" cy="75" r="22" fill="white" />
             
-            {/* 四肢 - 短短圓圓 */}
-            <ellipse cx="32" cy="88" rx="8" ry="5" fill="white" /> {/* 左腳 */}
-            <ellipse cx="68" cy="88" rx="8" ry="5" fill="white" /> {/* 右腳 */}
-            <ellipse cx="35" cy="75" rx="6" ry="4" fill="white" /> {/* 左手 */}
-            <ellipse cx="65" cy="75" rx="6" ry="4" fill="white" /> {/* 右手 */}
+            {/* 四肢 */}
+            <ellipse cx="32" cy="88" rx="8" ry="5" fill="white" />
+            <ellipse cx="68" cy="88" rx="8" ry="5" fill="white" />
+            <ellipse cx="35" cy="75" rx="6" ry="4" fill="white" />
+            <ellipse cx="65" cy="75" rx="6" ry="4" fill="white" />
 
-            {/* 頭部 - 圓潤的大臉 */}
+            {/* 臉部與耳朵 */}
             <path d="M25 45C25 25 75 25 75 45C75 62 65 72 50 72C35 72 25 62 25 45Z" fill="white" />
             
+            {/* 耳朵 - 加入動態 Class */}
+            <g className="bunny-ear-l">
+              <path d="M35 30C25 5 42 -5 45 30" fill="white" />
+              <path d="M37 28C30 10 40 5 42 28" fill="#FFD1DC" />
+            </g>
+            <g className="bunny-ear-r">
+              <path d="M65 30C75 5 58 -5 55 30" fill="white" />
+              <path d="M63 28C70 10 60 5 58 28" fill="#FFD1DC" />
+            </g>
+
             {/* 腮紅 */}
             <circle cx="35" cy="55" r="6" fill="#FFB7C5" fillOpacity="0.4" />
             <circle cx="65" cy="55" r="6" fill="#FFB7C5" fillOpacity="0.4" />
 
-            {/* 耳朵 */}
-            <path d="M35 30C25 5 42 -5 45 30" fill="white" />
-            <path d="M37 28C30 10 40 5 42 28" fill="#FFD1DC" />
-            <path d="M65 30C75 5 58 -5 55 30" fill="white" />
-            <path d="M63 28C70 10 60 5 58 28" fill="#FFD1DC" />
-
-            {/* 超大萌眼 */}
-            <circle cx="40" cy="48" r="7" fill="#333" />
-            <circle cx="42" cy="45" r="2.5" fill="white" /> {/* 眼中高光 */}
-            <circle cx="38" cy="50" r="1" fill="white" />   {/* 眼中次高光 */}
-            
-            <circle cx="60" cy="48" r="7" fill="#333" />
-            <circle cx="58" cy="45" r="2.5" fill="white" /> {/* 眼中高光 */}
-            <circle cx="62" cy="50" r="1" fill="white" />   {/* 眼中次高光 */}
+            {/* 超大萌眼 - 加入眨眼 Class */}
+            <g className="bunny-eye-pupil">
+              <circle cx="40" cy="48" r="7" fill="#333" />
+              <circle cx="42" cy="45" r="2.5" fill="white" />
+              <circle cx="38" cy="50" r="1" fill="white" />
+            </g>
+            <g className="bunny-eye-pupil">
+              <circle cx="60" cy="48" r="7" fill="#333" />
+              <circle cx="58" cy="45" r="2.5" fill="white" />
+              <circle cx="62" cy="50" r="1" fill="white" />
+            </g>
 
             {/* 鼻子 & 嘴巴 */}
             <circle cx="50" cy="53" r="2" fill="#FFB7C5" />
             <path d="M47 58C48 60 52 60 53 58" stroke="#333" strokeWidth="1" strokeLinecap="round" />
-            <path d="M48 60C49 63 51 63 52 60" fill="#E74C3C" /> {/* 小紅舌頭 */}
+            <path d="M48 60C49 63 51 63 52 60" fill="#E74C3C" />
 
-            {/* 粉紅蝴蝶結 */}
-            <rect x="35" y="68" width="30" height="4" rx="2" fill="#FF8DA1" />
-            <path d="M50 70L42 65V75L50 70Z" fill="#FF8DA1" stroke="#FFB7C5" strokeWidth="1" />
-            <path d="M50 70L58 65V75L50 70Z" fill="#FF8DA1" stroke="#FFB7C5" strokeWidth="1" />
-            <circle cx="50" cy="70" r="3" fill="#FF8DA1" />
+            {/* 蝴蝶結 - 加入震動 Class */}
+            <g className="bunny-bow-group">
+              <rect x="35" y="68" width="30" height="4" rx="2" fill="#FF8DA1" />
+              <path d="M50 70L42 65V75L50 70Z" fill="#FF8DA1" stroke="#FFB7C5" strokeWidth="1" />
+              <path d="M50 70L58 65V75L50 70Z" fill="#FF8DA1" stroke="#FFB7C5" strokeWidth="1" />
+              <circle cx="50" cy="70" r="3" fill="#FF8DA1" />
+            </g>
           </svg>
         </div>
         <div className="bunny-shadow"></div>
