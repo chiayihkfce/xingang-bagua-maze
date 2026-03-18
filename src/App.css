@@ -1240,73 +1240,114 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
 
-/* 自然風小白兔裝飾 - 結構聯動版 */
+/* 物理級小白兔裝飾 - 五階段動態版 */
 .bunny-container {
   position: fixed;
-  bottom: 20px;
-  left: -100px;
+  bottom: 25px;
+  left: -120px;
   z-index: 9999;
   pointer-events: none;
   user-select: none;
-  animation: bunnyWander 30s infinite linear;
+  animation: bunnyWander 35s infinite linear;
 }
 
-/* 全身大容器 - 負責主要的跳躍位移 */
 .bunny-sprite {
-  width: 70px;
+  width: 90px;
   height: 60px;
   position: relative;
   transform-origin: center bottom;
-  animation: bunnyFullBodyJump 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
 
-/* 局部微調：腳部收縮 (不離開身體) */
-.bunny-part-leg { 
-  animation: legSqueeze 0.8s infinite; 
-  transform-origin: center top; 
+/* 1. 身體/脊椎動畫 - 負責拉伸與收縮 */
+.bunny-body-rig {
+  animation: spineFlex 1.2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  transform-origin: 30% 80%;
 }
 
-/* 局部微調：耳朵擺動 */
-.bunny-part-ear { 
-  animation: earFlop 0.8s infinite; 
-  transform-origin: bottom; 
+/* 2. 後腿動畫 - 負責蹬地與跨越 (Over-reach) */
+.bunny-leg-back {
+  animation: backLegOverReach 1.2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  transform-origin: 20px 50px;
 }
 
-@keyframes bunnyFullBodyJump {
-  0%, 100% { 
-    transform: translateY(0) scaleY(0.85) scaleX(1.05); /* 落地壓扁感 */
-  }
-  40% { 
-    transform: translateY(-50px) scaleY(1.05) scaleX(0.95) rotate(3deg); /* 跳起拉長並微轉頭 */
-  }
+/* 3. 前腿動畫 - 負責預備與支撐 */
+.bunny-leg-front {
+  animation: frontLegSupport 1.2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  transform-origin: 60px 50px;
 }
 
-@keyframes legSqueeze {
-  0%, 100% { transform: scaleY(1); }
-  40% { transform: scaleY(0.7) translateY(-2px); } /* 縮腳感，但 translateY 極小防止分離 */
+/* 4. 耳朵動畫 - 負責隨動 (Follow Through) */
+.bunny-ears-rig {
+  animation: earsFollow 1.2s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  transform-origin: 70px 30px;
 }
 
-@keyframes earFlop {
-  0%, 100% { transform: rotate(0); }
-  40% { transform: rotate(-10deg) scaleY(1.1); }
+/* 全體垂直位移 (跳躍軌跡) */
+.bunny-jump-track {
+  animation: jumpOrbit 1.2s infinite cubic-bezier(0.3, 0, 0.4, 1);
+}
+
+@keyframes jumpOrbit {
+  0%, 15%, 100% { transform: translateY(0); } /* 蓄力與恢復期在地面 */
+  50% { transform: translateY(-70px); } /* 騰空最高點 */
+}
+
+@keyframes spineFlex {
+  0%, 100% { transform: scaleX(1) scaleY(0.8) rotate(0); } /* 1. 恢復/重置 */
+  15% { transform: scaleX(0.85) scaleY(0.7) rotate(-5deg); } /* 2. 蓄力 (身體蜷縮) */
+  35% { transform: scaleX(1.3) scaleY(1.1) rotate(10deg); } /* 3. 蹬起 (脊椎伸展最長) */
+  60% { transform: scaleX(0.9) scaleY(1.2) rotate(-10deg); } /* 4. 騰空收縮 (準備落地) */
+  80% { transform: scaleX(1.1) scaleY(0.85) rotate(0); } /* 5. 落地支撐 */
+}
+
+@keyframes backLegOverReach {
+  0%, 100% { transform: translateX(0) scale(1); }
+  15% { transform: translateX(5px) scaleY(0.8); } /* 蓄力後移 */
+  35% { transform: translateX(-10px) scaleY(1.5) rotate(-20deg); } /* 蹬地伸直 */
+  80% { transform: translateX(45px) scale(1.1) rotate(10deg); } /* 關鍵：跨越前肢 (Over-reach) */
+}
+
+@keyframes frontLegSupport {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  35% { transform: translateY(-10px) rotate(30deg); } /* 起跳抬起 */
+  65% { transform: translateY(5px) rotate(-10deg); } /* 提前落地支撐 */
+  80% { transform: translateY(2px) scaleX(1.2); } /* 受力擠壓 (Squash) */
+}
+
+@keyframes earsFollow {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  20% { transform: rotate(-20deg); } /* 蓄力向下貼 */
+  55% { transform: rotate(15deg) translateY(-5px); } /* 空中向上彈 */
+  85% { transform: rotate(25deg) translateY(2px); } /* 落地慣性前甩 */
 }
 
 .bunny-shadow {
   position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 45px;
-  height: 6px;
-  background: rgba(0,0,0,0.12);
+  bottom: -8px;
+  left: 40px;
+  width: 50px;
+  height: 8px;
+  background: rgba(0,0,0,0.15);
   border-radius: 50%;
-  filter: blur(2px);
-  animation: shadowScale 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  filter: blur(3px);
+  animation: shadowPhysics 1.2s infinite;
 }
 
-@keyframes shadowScale {
-  0%, 100% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-  40% { transform: translateX(-50%) scale(0.5); opacity: 0.3; }
+@keyframes shadowPhysics {
+  0%, 15%, 100% { transform: scale(1.2); opacity: 1; }
+  50% { transform: scale(0.5); opacity: 0.2; }
+}
+
+@keyframes bunnyWander {
+  0% { left: -120px; transform: scaleX(1); }
+  48% { transform: scaleX(1); }
+  50% { left: calc(100vw - 120px); transform: scaleX(-1); }
+  98% { transform: scaleX(-1); }
+  100% { left: -120px; transform: scaleX(1); }
+}
+
+@media (max-width: 600px) {
+  .bunny-container { transform: scale(0.6); bottom: 15px; }
 }
 
 @keyframes bunnyWander {

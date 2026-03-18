@@ -1267,34 +1267,44 @@ function App() {
         </div>
       )}
 
-      {/* 自然風小白兔裝飾 */}
+      {/* 物理級小白兔裝飾 - 五階段動態版 */}
       <div className="bunny-container">
-        <div className="bunny-sprite">
-          <svg viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', height: '100%'}}>
-            {/* 尾巴 */}
-            <circle cx="15" cy="55" r="5" fill="white" />
-            {/* 後腳 */}
-            <g className="bunny-part-leg">
-              <ellipse cx="30" cy="70" rx="10" ry="6" fill="white" />
-            </g>
-            {/* 身體 */}
-            <path d="M15 55C15 35 35 25 60 30C75 35 80 50 75 65C70 75 30 75 15 55Z" fill="white" />
-            {/* 前腳 */}
-            <g className="bunny-part-leg">
-              <ellipse cx="65" cy="72" rx="8" ry="4" fill="white" />
-            </g>
-            {/* 頭部 */}
-            <circle cx="70" cy="35" r="14" fill="white" />
-            {/* 耳朵 */}
-            <g className="bunny-part-ear">
-              <path d="M62 25C58 5 68 0 70 25" stroke="white" strokeWidth="6" strokeLinecap="round" />
-              <path d="M62 25C60 10 66 8 68 25" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
-              <path d="M78 25C82 5 92 8 85 25" stroke="white" strokeWidth="6" strokeLinecap="round" />
-              <path d="M78 25C80 10 88 12 85 25" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
-            </g>
-            {/* 眼睛 */}
-            <circle cx="78" cy="33" r="1.5" fill="#333" />
-          </svg>
+        <div className="bunny-jump-track">
+          <div className="bunny-sprite">
+            <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', height: '100%'}}>
+              {/* 地面陰影 (放在跳躍軌跡外) */}
+              
+              <g className="bunny-body-rig">
+                {/* 尾巴 */}
+                <circle cx="15" cy="65" r="5" fill="white" />
+                
+                {/* 核心身體 (脊椎) */}
+                <path d="M15 65C15 40 40 30 70 35C90 40 95 60 90 80C85 90 30 90 15 65Z" fill="white" />
+                
+                {/* 頭部 */}
+                <circle cx="85" cy="45" r="16" fill="white" />
+                <circle cx="93" cy="43" r="1.5" fill="#333" /> {/* 眼睛 */}
+
+                {/* 耳朵組 - 隨動動畫 */}
+                <g className="bunny-ears-rig">
+                  <path d="M75 35C70 10 80 5 82 35" stroke="white" strokeWidth="7" strokeLinecap="round" />
+                  <path d="M75 35C72 15 78 12 80 35" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
+                  <path d="M90 35C95 5 105 10 98 35" stroke="white" strokeWidth="7" strokeLinecap="round" />
+                  <path d="M90 35C94 10 100 12 98 35" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
+                </g>
+              </g>
+
+              {/* 前腿組 - 支撐動畫 */}
+              <g className="bunny-leg-front">
+                <ellipse cx="80" cy="85" rx="10" ry="5" fill="white" />
+              </g>
+
+              {/* 後腿組 - 跨越動畫 (Over-reach) */}
+              <g className="bunny-leg-back">
+                <ellipse cx="30" cy="82" rx="14" ry="7" fill="white" />
+              </g>
+            </svg>
+          </div>
         </div>
         <div className="bunny-shadow"></div>
       </div>
