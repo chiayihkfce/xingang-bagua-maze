@@ -675,13 +675,21 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   margin-bottom: 0.8rem;
 }
 
-/* 登入彈窗按鈕佈局 */
+/* 登入彈窗按鈕佈局 - 改為固定在底部 */
 .admin-login-actions {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  margin-top: 2.5rem;
+  margin-top: 1rem;
   width: 100%;
+  position: sticky;
+  bottom: 0;
+  background: var(--card-bg);
+  padding-top: 1.5rem;
+  padding-bottom: 3.5rem; /* 配合彈窗原本的 padding */
+  margin-bottom: -3.5rem; /* 抵消彈窗原本的 padding 讓它貼到底部 */
+  z-index: 10;
+  box-shadow: 0 -15px 25px rgba(0,0,0,0.4); /* 增加陰影區分捲動內容 */
 }
 
 .admin-login-actions button {
