@@ -599,7 +599,7 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   align-items: center;
   z-index: 2000;
   backdrop-filter: blur(5px);
-  padding: 2rem;
+  padding: 3rem 1.5rem; /* 增加上下的內邊距 */
   box-sizing: border-box;
 }
 
@@ -654,8 +654,9 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   max-width: 480px;
   text-align: center;
   box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-  max-height: 90vh;
+  max-height: 85vh; /* 調降最大高度，增加外部空間 */
   overflow-y: auto;
+  margin: auto; /* 確保在彈性容器中置中並保有邊距 */
 }
 
 .admin-login-modal input[type="password"] {
