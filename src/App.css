@@ -568,9 +568,34 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   }
 }
 
-/* Thematic Loading Screen */
+/* 進場動畫全螢幕覆蓋層 */
+.entry-animation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--dark-bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.8s;
+  overflow: hidden;
+}
+
+/* 退場狀態樣式 */
+.entry-animation-overlay.exit {
+  opacity: 0;
+  transform: scale(1.1);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Thematic Loading Screen (容器內部) */
 .thematic-loading {
-  height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -580,8 +605,8 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
 
 .bagua-spinner-container {
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: clamp(150px, 40vw, 200px);
+  height: clamp(150px, 40vw, 200px);
   display: flex;
   align-items: center;
   justify-content: center;

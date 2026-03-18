@@ -8,7 +8,12 @@ function App() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sessions, setSessions] = useState<{name: string, price: number, fixedDate?: string, fixedTime?: string}[]>([]);
-  const [isInitialLoading, setIsInitialLoading] = useState(true); // 新增：初始載入狀態
+  
+  // 進場動畫相關狀態
+  const [isInitialLoading, setIsInitialLoading] = useState(true); 
+  const [isEntryAnimating, setIsEntryAnimating] = useState(true); 
+  const [shouldRenderEntry, setShouldRenderEntry] = useState(true);
+
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
@@ -97,48 +102,47 @@ function App() {
            `${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
-  // 1. 初始載入場次 (優化效能版：減少渲染、精準計時)
+  // 1. 初始載入場次 (優化進場動畫邏輯)
   useEffect(() => {
+    const minEntryTime = 2500; // 最短動畫時間 2.5 秒
+    const startTime = Date.now();
+    
     const fetchSessions = async () => {
-      console.time('🚀 [Performance] 初始載入場次 (fetchSessions)');
+      console.time('🚀 [Performance] 初始載入場次');
       
-      // 1. 優先從快取讀取
+      // 優先從快取讀取
       const cached = localStorage.getItem('bagua_maze_sessions');
-      let currentSessions: any[] = [];
-      
       if (cached) {
         try {
-          currentSessions = JSON.parse(cached);
-          setSessions(currentSessions);
-          setIsInitialLoading(false);
-          console.log('📦 [Cache] 已從快取快速載入');
-        } catch (e) {
-          console.error('❌ 快取解析失敗');
-        }
+          setSessions(JSON.parse(cached));
+        } catch (e) { console.error('❌ 快取解析失敗'); }
       }
 
       try {
-        const apiStartTime = Date.now();
         const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSessions`);
         const newData = await res.json();
-        const apiDuration = Date.now() - apiStartTime;
-        
-        console.log(`⏱️ [Debug] 純網絡請求耗時: ${apiDuration}ms`);
-
         if (Array.isArray(newData) && newData.length > 0) {
-          // 2. 只有當資料真的有變動時才更新 sessions 狀態
-          const isDataChanged = JSON.stringify(newData) !== JSON.stringify(currentSessions);
-          
-          if (isDataChanged) {
-            setSessions(newData);
-            localStorage.setItem('bagua_maze_sessions', JSON.stringify(newData));
-          }
+          setSessions(newData);
+          localStorage.setItem('bagua_maze_sessions', JSON.stringify(newData));
         }
       } catch (err) {
         console.error('❌ [Error] 無法更新場次:', err);
       } finally {
-        setIsInitialLoading(false);
-        console.timeEnd('🚀 [Performance] 初始載入場次 (fetchSessions)');
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, minEntryTime - elapsedTime);
+        
+        // 等待剩餘的動畫時間後，執行退場動畫
+        setTimeout(() => {
+          setIsInitialLoading(false); // 標記 API 資料已就緒
+          setIsEntryAnimating(false); // 觸發 CSS 退場動畫
+          
+          // 等待 CSS 動畫結束 (0.8s) 後徹底移除組件
+          setTimeout(() => {
+            setShouldRenderEntry(false);
+          }, 800);
+        }, remainingTime);
+        
+        console.timeEnd('🚀 [Performance] 初始載入場次');
       }
     };
     fetchSessions();
@@ -1099,31 +1103,6 @@ function App() {
     );
   }
 
-  if (isInitialLoading && sessions.length === 0) {
-    return (
-      <div className="container">
-        <div className="loading-screen thematic-loading">
-          <div className="bagua-spinner-container">
-            <div className="bagua-spinner">
-              {/* 八卦符號圖案：用 CSS 或簡單形狀模擬 */}
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className={`trigram trigram-${i}`} style={{ '--i': i } as any}></div>
-              ))}
-              <div className="bagua-center">
-                <div className="taiji"></div>
-              </div>
-            </div>
-            <div className="loading-glow"></div>
-          </div>
-          <div className="loading-text-container">
-            <p className="loading-main-text">正在開啟八卦時空</p>
-            <p className="loading-sub-text">穿越清朝與昭和的交界...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (submitted) {
     return (
       <div className="container">
@@ -1155,6 +1134,29 @@ function App() {
 
   return (
     <div className="container">
+      {/* 進場動畫 Overlay */}
+      {shouldRenderEntry && (
+        <div className={`entry-animation-overlay ${!isEntryAnimating ? 'exit' : ''}`}>
+          <div className="thematic-loading">
+            <div className="bagua-spinner-container">
+              <div className="bagua-spinner">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className={`trigram trigram-${i}`} style={{ '--i': i } as any}></div>
+                ))}
+                <div className="bagua-center">
+                  <div className="taiji"></div>
+                </div>
+              </div>
+              <div className="loading-glow"></div>
+            </div>
+            <div className="loading-text-container">
+              <p className="loading-main-text">正在開啟八卦時空</p>
+              <p className="loading-sub-text">穿越清朝與昭和的交界...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showAdminLogin && (
         <div className="modal-overlay">
           <div className="admin-login-modal form-card">
@@ -1537,7 +1539,7 @@ function App() {
                 </div>
               </>
             )}
-          </form>
+          </main>
         </section>
       </main>
 
