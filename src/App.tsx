@@ -536,11 +536,14 @@ function App() {
       const selectedSession = sessions.find(s => s.name === value);
       let newPickupTime = formData.pickupTime;
 
-      // 如果是固定場次（有固定日期），自動填入第一個可選時段
+      // 如果是固定場次（有固定日期）
       if (selectedSession?.fixedDate) {
         const times = selectedSession.fixedTime ? selectedSession.fixedTime.split(',') : [];
-        const timeToUse = times.length > 0 ? times[0] : '09:00';
-        newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
+        // 如果目前填寫的時間日期與固定日期不同，或者目前沒填時間，則預設填入第一個時段
+        if (!newPickupTime.startsWith(selectedSession.fixedDate)) {
+          const timeToUse = times.length > 0 ? times[0] : '09:00';
+          newPickupTime = `${selectedSession.fixedDate} ${timeToUse}`;
+        }
       } else if (selectedSession?.fixedTime) {
         // 如果只有固定時間（無固定日期），且目前只有一個時段時才自動填入
         const times = selectedSession.fixedTime.split(',');
@@ -1464,12 +1467,27 @@ function App() {
                       timeIntervals={30}
                       timeCaption="時間"
                       dateFormat="yyyy-MM-dd HH:mm"
-                      className={`date-picker-input ${sessions.find(s => s.name === formData.session)?.fixedDate ? 'fixed-readonly' : ''}`}
+                      className="date-picker-input"
                       placeholderText="請選擇遊玩時間"
                       required
-                      readOnly={!!sessions.find(s => s.name === formData.session)?.fixedDate}
                       minDate={new Date()}
-                      filterDate={(date) => date.getDay() !== 1 && date.getDay() !== 2}
+                      // 特別預約場次：鎖定日期區間為當天
+                      maxDate={sessions.find(s => s.name === formData.session)?.fixedDate 
+                        ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
+                        : undefined}
+                      minDateSpecial={sessions.find(s => s.name === formData.session)?.fixedDate 
+                        ? new Date(sessions.find(s => s.name === formData.session)!.fixedDate!) 
+                        : new Date()}
+                      filterDate={(date) => {
+                        const selectedSession = sessions.find(s => s.name === formData.session);
+                        if (selectedSession?.fixedDate) {
+                          const fixedDate = new Date(selectedSession.fixedDate);
+                          return date.getFullYear() === fixedDate.getFullYear() &&
+                                 date.getMonth() === fixedDate.getMonth() &&
+                                 date.getDate() === fixedDate.getDate();
+                        }
+                        return date.getDay() !== 1 && date.getDay() !== 2;
+                      }}
                       minTime={new Date(new Date().setHours(9, 0, 0))}
                       maxTime={new Date(new Date().setHours(15, 0, 0))}
                       filterTime={(time) => {
