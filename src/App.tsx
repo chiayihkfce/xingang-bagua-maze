@@ -103,23 +103,31 @@ function App() {
 
   // 1. 初始載入場次 (優化進場動畫邏輯)
   useEffect(() => {
-    const minEntryTime = 1200; // 最短動畫時間 1.2 秒
+    const minEntryTime = 2500; // 恢復為 2.5 秒，確保動畫完整呈現
     const startTime = Date.now();
     let isTransitionStarted = false; // 防止重複觸發退場
 
     const triggerExitAnimation = () => {
       if (isTransitionStarted) return;
-      isTransitionStarted = true;
       
       const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, minEntryTime - elapsedTime);
-      
-      setTimeout(() => {
-        setIsEntryAnimating(false); // 觸發 CSS 退場動畫
+      // 只有當「資料已就緒」且「時間也過了大於等於 minEntryTime」才真正開始退場
+      // 如果資料先到，會在這裡計算剩餘時間並等待
+      if (elapsedTime >= minEntryTime) {
+        isTransitionStarted = true;
+        setIsEntryAnimating(false); // 觸發 CSS 淡出
+        setTimeout(() => setShouldRenderEntry(false), 800); // 動畫結束後移除
+      } else {
+        // 如果資料早到，則預排在 2.5 秒整點觸發
+        const remainingTime = minEntryTime - elapsedTime;
         setTimeout(() => {
-          setShouldRenderEntry(false);
-        }, 800);
-      }, remainingTime);
+          if (!isTransitionStarted) {
+            isTransitionStarted = true;
+            setIsEntryAnimating(false);
+            setTimeout(() => setShouldRenderEntry(false), 800);
+          }
+        }, remainingTime);
+      }
     };
     
     const fetchSessions = async () => {
