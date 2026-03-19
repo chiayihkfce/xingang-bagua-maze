@@ -651,18 +651,19 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   margin-top: -2px;
   background: var(--primary-gold);
   border-radius: 1px;
-  box-shadow: 0 0 8px rgba(241, 196, 15, 0.4);
+  /* 徹底移除 box-shadow，改用 drop-shadow 確保斷開處不發光 */
+  filter: drop-shadow(0 0 4px rgba(241, 196, 15, 0.6));
   transform: rotate(calc(var(--i) * 45deg)) translateY(-95px);
   opacity: 0.9;
   transition: all 0.3s ease;
 }
 
-/* 陰線 (Broken Line) 的共用樣式 */
+/* 陰線 (Broken Line) 的樣式：確保使用 transparent */
 .broken-line {
   background: linear-gradient(90deg, 
     var(--primary-gold) 42%, 
-    var(--dark-bg) 42%, 
-    var(--dark-bg) 58%, 
+    transparent 42%, 
+    transparent 58%, 
     var(--primary-gold) 58%) !important;
 }
 
@@ -672,56 +673,56 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   width: 100%;
   height: 100%;
   left: 0;
-  background: var(--primary-gold); /* 預設為金線，不使用 inherit */
+  background: var(--primary-gold);
   border-radius: inherit;
-  box-shadow: inherit;
+  box-shadow: none; /* 確保沒有遺留的陰影 */
 }
 
-/* ::before 是外圈 (更遠離中心)，::after 是內圈 (更接近中心) */
+/* ::before 是外圈，::after 是內圈 */
 .trigram::before { transform: translateY(-10px); }
 .trigram::after { transform: translateY(10px); }
 
-/* 8 個卦象的精確定義 (由外向內：::before, element, ::after) */
+/* 8 個卦象的精確定義：全部改為透明 (transparent) 斷線 */
 
-/* 0: 乾 (Qian) - ☰ (111) - 全部實線 */
+/* 0: 乾 (Qian) - 全部實線 */
 .trigram-0 { background: var(--primary-gold); }
 
-/* 1: 巽 (Xun) - ☴ (110) - 內斷 (::after) */
+/* 1: 巽 (Xun) - 內斷 */
 .trigram-1::after { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 2: 坎 (Kan) - ☵ (010) - 外斷、內斷 */
+/* 2: 坎 (Kan) - 外斷、內斷 */
 .trigram-2::before, .trigram-2::after { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 3: 艮 (Gen) - ☶ (100) - 中斷、內斷 */
+/* 3: 艮 (Gen) - 中斷、內斷 */
 .trigram-3 { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 .trigram-3::after {
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 4: 坤 (Kun) - ☷ (000) - 全部斷線 */
+/* 4: 坤 (Kun) - 全部斷線 */
 .trigram-4, .trigram-4::before, .trigram-4::after { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 5: 震 (Zhen) - ☳ (001) - 外斷、中斷 */
+/* 5: 震 (Zhen) - 外斷、中斷 */
 .trigram-5, .trigram-5::before { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 6: 離 (Li) - ☲ (101) - 中斷 (element) */
+/* 6: 離 (Li) - 中斷 */
 .trigram-6 { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
-/* 7: 兌 (Dui) - ☱ (011) - 外斷 (::before) */
+/* 7: 兌 (Dui) - 外斷 */
 .trigram-7::before { 
-  background: linear-gradient(90deg, var(--primary-gold) 42%, var(--dark-bg) 42%, var(--dark-bg) 58%, var(--primary-gold) 58%);
+  background: linear-gradient(90deg, var(--primary-gold) 42%, transparent 42%, transparent 58%, var(--primary-gold) 58%);
 }
 
 .bagua-center {
@@ -836,4 +837,447 @@ input:focus, select:focus, textarea:focus, .date-picker-input:focus {
   padding: 40px 20px;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+/* 蝞∠??憛?????游? */
+.admin-section {
+  margin-top: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-nav {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
+}
+
+.admin-nav button {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-family: 'Noto Serif TC', serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-nav button.active {
+  background: var(--primary-gold);
+  color: black;
+  border-color: var(--primary-gold);
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+}
+
+.admin-login-title {
+  font-size: 2.2rem !important;
+  margin-bottom: 2.5rem !important;
+  text-align: center;
+  width: 100%;
+}
+
+.admin-login-modal {
+  background: var(--card-bg);
+  padding: 3.5rem 3rem;
+  border-radius: 20px;
+  border: 2px solid var(--primary-gold);
+  width: 90%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .admin-login-modal {
+    padding: 2rem 1.2rem;
+  }
+  .confirmation-details {
+    font-size: 0.9rem;
+    word-break: break-all;
+  }
+}
+
+.admin-login-modal input[type="password"] {
+  padding: 1.2rem;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+  margin-top: 0.8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-login-modal label {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+/* 靽格鞈?撠敶?璅?? */
+.admin-edit-modal {
+  height: 80vh !important; /* ?箏?擃漲隞亙?折 Flex 閮? */
+  max-height: 80vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important; 
+  overflow: hidden !important; 
+  max-width: 800px !important;
+}
+
+.admin-edit-modal .form-section-title {
+  padding: 2rem 2.5rem 1rem !important;
+  margin: 0 !important;
+  flex: 0 0 auto; /* 璅?擃漲?箏? */
+}
+
+.admin-edit-modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; /* 銵典雿遛?拚?蝛粹? */
+  overflow: hidden;
+  height: 100%;
+}
+
+.admin-edit-modal .edit-form-grid {
+  flex: 1 1 auto; /* 銵典?潛??雿遛?拚?蝛粹? */
+  overflow-y: auto; /* ?芣??ㄐ???*/
+  padding: 1rem 2.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-gold) transparent;
+}
+
+.admin-edit-modal .admin-login-actions {
+  flex: 0 0 auto; /* ???擃漲?箏? */
+  padding: 1.5rem 2.5rem 2rem !important;
+  margin: 0 !important;
+  background: var(--card-bg); /* 雿輻??蝒????脤?? */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+/* ??靽格敶??抒????脰??芸?嚗宏?斗?撠皞Ｗ??important 閮剖? */
+.admin-edit-modal .admin-login-actions button {
+  width: auto !important;
+  height: 52px !important;
+  padding: 0 1.5rem !important;
+  margin: 0 !important;
+  flex: 1 1 0 !important; /* 雿輻?箇?撖砍漲??0 ???扳撅?蝣箔?銝滯??*/
+  min-width: 0 !important;
+}
+
+/* ?餃敶???雿? */
+.admin-login-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.admin-login-actions button {
+  width: 50% !important; /* 撘瑕撖砍漲撟喳? */
+  height: 52px !important; /* 撘瑕擃漲銝??*/
+  padding: 0 !important;   /* 蝘駁?航撠撖砍漲撌桃??? */
+  margin: 0 !important;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box !important;
+  transition: all 0.3s ease;
+  min-width: 0 !important; /* 蝘駁?身?撠祝摨阡???*/
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.admin-login-actions .submit-btn {
+  border: 2px solid transparent !important; /* 蝣箔?雿?摰銝??*/
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 銵冽璅???芸? */
+.submissions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.submissions-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5; /* ??銵冽璅??惜蝝?*/
+  background: rgba(30, 41, 51, 0.95) !important; /* ?楛?蝣箔?璅?皜銝??? */
+  color: var(--primary-gold);
+  padding: 1.2rem 1rem;
+  text-align: center;
+  font-family: 'Noto Serif TC', serif;
+  border-bottom: 2px solid var(--accent-orange);
+}
+
+/* 蝣箔? DatePicker 銝??詨撅斤??擃??脫迫鋡?Sticky Header ?? */
+.react-datepicker-popper {
+  z-index: 2000 !important;
+}
+
+.submissions-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* 靽格/?芷?? */
+.action-cell {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.edit-btn, .delete-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  font-size: 0.8rem;
+  transition: transform 0.2s;
+}
+
+.edit-btn {
+  background: var(--primary-gold);
+  color: black;
+}
+
+.delete-btn {
+  background: #c0392b;
+  color: white;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* ?湔活?”? */
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.edit-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.submissions-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.add-session-form {
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-session-form button {
+  background: var(--accent-orange);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ???批??*/
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination button {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ?勗?銵冽 */
+/* 蝞∠??⊥芋??捆?典撖砍???? */
+.admin-dashboard {
+  max-width: none !important;
+  width: 100% !important;
+  padding: 1rem !important;
+  box-sizing: border-box;
+}
+
+.submissions-table-container {
+  width: 100%;
+  overflow-x: auto; /* ?迂璈怠??脣? */
+  -webkit-overflow-scrolling: touch; /* iOS ???脣? */
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
+
+.submissions-table {
+  width: max-content; /* 霈”?潭?摰寞???閫貊摰孵?脣? */
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+/* 蝺刻摩敶??????*/
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 20px 10px; /* ?????蝷???*/
+  }
+
+  .admin-edit-modal {
+    max-height: 85vh !important;
+    margin: 20px auto !important;
+  }
+
+  .admin-nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-nav button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .edit-form-grid {
+    grid-template-columns: 1fr; /* ????箏甈?*/
+    gap: 1rem;
+  }
+  
+  .admin-section {
+    padding: 1.5rem 1rem !important;
+  }
+}
+
+.submissions-table th, 
+.submissions-table td,
+.submissions-table thead th,
+.submissions-table tbody td {
+  padding: 0.8rem;
+  text-align: center !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  color: var(--primary-gold);
+  cursor: pointer;
+  margin-left: 5px;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.sort-btn:hover, .sort-btn.active {
+  opacity: 1;
+}
+
+/* ???挾??蝯?*/
+.time-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.time-slot-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.6rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.time-slot-btn:hover {
+  border-color: var(--primary-gold);
+}
+
+.time-slot-btn.active {
+  background: var(--primary-gold);
+  color: black;
+  border-color: var(--primary-gold);
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
 }
