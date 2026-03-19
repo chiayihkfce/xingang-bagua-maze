@@ -6,74 +6,6 @@ import './App.css'
 
 function App() {
   // --- 1. 狀態與變數定義 ---
-  const bunnyRef = useRef<HTMLDivElement>(null);
-  const earRef = useRef<SVGGElement>(null);
-  const legRef = useRef<SVGGElement>(null);
-  const bodyRef = useRef<SVGGElement>(null);
-
-  // GSAP 核心動畫邏輯
-  useEffect(() => {
-    if (!bunnyRef.current || !earRef.current || !legRef.current || !bodyRef.current) return;
-
-    const tl = gsap.timeline({ repeat: -1 });
-
-    // 1. 起跳階段 (Anticipation to Launch)
-    tl.to(bunnyRef.current, {
-      duration: 0.6,
-      y: -100,           // 向上跳
-      rotation: 15,      // 【起跳前傾】
-      ease: "power2.out"
-    })
-    .to(earRef.current, {
-      duration: 0.6,
-      rotation: -30,     // 【耳朵隨動】風阻貼頸
-      delay: -0.6
-    })
-    .to(legRef.current, {
-      duration: 0.6,
-      scaleY: 1.6,       // 【強力蹬地】拉伸
-      rotation: 45,
-      delay: -0.6
-    })
-    .to(bodyRef.current, {
-      duration: 0.6,
-      scaleX: 1.3,       // 脊椎拉伸
-      delay: -0.6
-    })
-    
-    // 2. 落地俯衝階段 (Apex to Impact)
-    .to(bunnyRef.current, {
-      duration: 0.5,
-      y: 0,
-      rotation: -20,     // 【落地俯衝】頭部下壓
-      ease: "power2.in"
-    })
-    .to(earRef.current, {
-      duration: 0.5,
-      rotation: 35,      // 【落地慣性】耳朵向前甩
-      delay: -0.5
-    })
-    .to(legRef.current, {
-      duration: 0.5,
-      scaleY: 0.8,       // 落地跨越預備
-      rotation: -45,
-      delay: -0.5
-    })
-    .to(bodyRef.current, {
-      duration: 0.5,
-      scaleX: 0.9,       // 落地壓縮
-      delay: -0.5
-    })
-    
-    // 3. 恢復與重置 (Recovery)
-    .to(bunnyRef.current, {
-      duration: 0.3,
-      rotation: 0,
-      ease: "back.out(1.7)"
-    });
-
-    return () => { tl.kill(); }; // 清除動畫防止記憶體洩漏
-  }, []);
 
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1336,49 +1268,6 @@ function App() {
           </div>
         </div>
       )}
-
-      {/* 歐洲野兔生物力學 - 絲滑物理序列版 (畫布擴大版) */}
-      <div className="bunny-container">
-        <div className="bunny-jump-track">
-          <div className="bunny-sprite">
-            <svg viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg" style={{width: '100%', height: '100%'}}>
-              {/* 繪製中心偏移調整，確保甩腿與長耳空間 */}
-              <g transform="translate(20, 30)">
-                <g className="bunny-body-rig">
-                  {/* 尾巴 */}
-                  <circle cx="15" cy="65" r="5" fill="white" />
-                  
-                  {/* 核心身體 (脊椎) */}
-                  <path d="M15 65C15 40 40 30 70 35C90 40 95 60 90 80C85 90 30 90 15 65Z" fill="white" />
-                  
-                  {/* 頭部 */}
-                  <circle cx="85" cy="45" r="16" fill="white" />
-                  <circle cx="93" cy="43" r="1.5" fill="#333" />
-
-                  {/* 野兔長耳組 - 隨動動畫 */}
-                  <g className="bunny-ears-rig">
-                    <path d="M75 35C65 -5 80 -10 82 35" stroke="white" strokeWidth="7" strokeLinecap="round" />
-                    <path d="M75 35C68 0 78 -3 80 35" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
-                    <path d="M90 35C100 -5 115 -10 98 35" stroke="white" strokeWidth="7" strokeLinecap="round" />
-                    <path d="M90 35C96 0 108 3 98 35" stroke="#FFD1DC" strokeWidth="3" strokeLinecap="round" />
-                  </g>
-                </g>
-
-                {/* 前腿組 - 再拉近一點 */}
-                <g className="bunny-leg-front">
-                  <rect x="75" y="72" width="18" height="6" rx="3" fill="white" />
-                </g>
-
-                {/* 後腿組 - 再拉近一點 */}
-                <g className="bunny-leg-back">
-                  <rect x="15" y="70" width="28" height="8" rx="4" fill="white" />
-                </g>
-              </g>
-            </svg>
-          </div>
-        </div>
-        <div className="bunny-shadow"></div>
-      </div>
 
       {showAdminLogin && (
         <div className="modal-overlay">
