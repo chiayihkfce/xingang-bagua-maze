@@ -1465,7 +1465,7 @@ function App() {
                         lineHeight: '1.6'
                       }}>
                         <p style={{ margin: 0, fontWeight: 'bold' }}>
-                          ⚡ 系統已自動選定：{formData.session || '正在計算中...'}
+                          系統已自動選定：{formData.session || '正在計算中...'}
                         </p>
                         <div className="discount-hint" style={{ marginTop: '0.5rem', color: '#ccc', fontSize: '0.85rem' }}>
                           ★ 優惠提醒：一般預約滿 5 份(含)以上可享有團體優惠價唷!!!!!!
