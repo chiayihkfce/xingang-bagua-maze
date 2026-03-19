@@ -1681,11 +1681,10 @@ function App() {
         <a 
           href="tel:053745074,,73" 
           className="social-btn" 
-          style={{ '--delay': '-1s' } as any}
           title="撥打電話諮詢 (分機 73)"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.509-8.954.058-.028 2.022-.932 2.022-.932l-3.521-6.795-2.028.956c-2.739 1.291-2.013 7.757 3.027 14.877 5.038 7.113 10.839 8.709 13.248 6.486l1.346-1.854z"/>
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.21 6.59 6.65l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
           </svg>
         </a>
         <a 
@@ -1693,7 +1692,6 @@ function App() {
           target="_blank" 
           rel="noopener noreferrer" 
           className="social-btn" 
-          style={{ '--delay': '0s' } as any}
           title="前往臉書查看更多"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1705,7 +1703,6 @@ function App() {
           target="_blank" 
           rel="noopener noreferrer" 
           className="social-btn" 
-          style={{ '--delay': '-2s' } as any}
           title="前往 IG 查看更多"
         >
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
