@@ -1353,13 +1353,13 @@ function App() {
 
       <header className="header">
         <div className="era-badge">光緒 x 昭和</div>
-        <h1>【新港八卦迷蹤】</h1>
+        <h1>【新港八卦謎蹤】</h1>
         <h2 className="main-title">實境解謎 活動報名</h2>
       </header>
 
       <main className="main-content">
         <div className="poster-container">
-          <img src="poster.jpg" alt="新港八卦迷蹤 海報" className="poster-image" />
+          <img src="poster.jpg" alt="新港八卦謎蹤 海報" className="poster-image" />
         </div>
 
         <section className="story-section">
@@ -1769,7 +1769,7 @@ function App() {
           <div className="admin-trigger" onClick={() => setShowAdminLogin(true)}>
             <img src="footer-logo.svg" alt="HKFCE Logo" className="footer-admin-logo" />
           </div>
-          <p className="copy">&copy; 2026 新港文教基金會 | 新港八卦迷蹤 製作團隊</p>
+          <p className="copy">&copy; 2026 新港文教基金會 | 新港八卦謎蹤 製作團隊</p>
         </div>
       </footer>
     </div>
