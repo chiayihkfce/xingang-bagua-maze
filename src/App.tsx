@@ -1679,6 +1679,16 @@ function App() {
       {/* 社交媒體浮動按鈕 - 八卦主題 */}
       <div className="social-float-container">
         <a 
+          href="tel:053745074,,73" 
+          className="social-btn" 
+          style={{ '--delay': '-1s' } as any}
+          title="撥打電話諮詢 (分機 73)"
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.509-8.954.058-.028 2.022-.932 2.022-.932l-3.521-6.795-2.028.956c-2.739 1.291-2.013 7.757 3.027 14.877 5.038 7.113 10.839 8.709 13.248 6.486l1.346-1.854z"/>
+          </svg>
+        </a>
+        <a 
           href="https://www.facebook.com/share/1DtGCBFnms/" 
           target="_blank" 
           rel="noopener noreferrer" 
