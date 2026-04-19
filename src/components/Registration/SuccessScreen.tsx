@@ -130,6 +130,32 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
 
   const canGoHome = (selectedPaymentDetail?.type === 'bank' ? updateSuccess : true) && (selectedPaymentDetail?.type === 'linepay' ? hasClickedPayment : true);
 
+  // 處理社交分享
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareText = `我在【新港八卦謎蹤】成功解開了神祕謎團，獲得了數位成就證書！你也快來挑戰看看吧！\n領取連結：${shareUrl}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '【新港八卦謎蹤】成就達成',
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.log('Share cancelled or failed:', err);
+      }
+    } else {
+      // 備援：複製連結
+      try {
+        await navigator.clipboard.writeText(shareText);
+        showAlert(lang === 'en' ? 'Share link copied!' : '分享資訊已複製，快去貼給好友吧！');
+      } catch (err) {
+        showAlert(lang === 'en' ? 'Please copy the URL manually.' : '請手動複製網址分享');
+      }
+    }
+  };
+
   // 如果是證書領取模式，顯示主題選擇畫面
   if (isCertMode) {
     return (
@@ -172,6 +198,18 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
             <span style={{ fontSize: '0.9rem', marginTop: '15px', opacity: 0.7 }}>莊重神祕 · 皇家氣勢</span>
           </button>
         </div>
+
+        <button 
+          onClick={handleShare}
+          style={{ 
+            marginTop: '40px', padding: '12px 30px', background: 'transparent', color: '#d4af37', border: '1px solid #d4af37', 
+            borderRadius: '50px', cursor: 'pointer', fontSize: '1.1rem', letterSpacing: '2px', transition: 'all 0.3s'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#d4af37'; e.currentTarget.style.color = '#000'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#d4af37'; }}
+        >
+          📢 向好友炫耀成就 (分享)
+        </button>
 
         {isUpdating && (
           <div style={{ marginTop: '40px' }}>
