@@ -213,8 +213,8 @@ export const generateCertificate = async (data: {
     const img = new Image();
     
     // 從 public 資料夾載入完美的向量印章模板
-    // 使用 URL 常數確保在不同環境下路徑正確
-    const sealUrl = new URL('/seal.svg', window.location.origin).href;
+    // 使用專案相對路徑確保在 GitHub Pages 子目錄下依然正確
+    const sealUrl = './seal.svg';
     
     await new Promise((resolve, reject) => {
       img.onload = resolve;
