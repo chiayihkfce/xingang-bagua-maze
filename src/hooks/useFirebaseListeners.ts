@@ -8,7 +8,7 @@ import {
   getDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { Session, TimeslotConfig, PaymentMethod, FormData } from '../types'
+import { Session, TimeslotConfig, PaymentMethod, FormData, SealConfig } from '../types'
 
 export const useFirebaseListeners = (
   formData: FormData,
@@ -28,6 +28,7 @@ export const useFirebaseListeners = (
   });
   
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [sealConfig, setSealConfig] = useState<SealConfig>({ activeSeal: 'full-yang' });
   const [isEntryAnimating, setIsEntryAnimating] = useState(true); 
   const [shouldRenderEntry, setShouldRenderEntry] = useState(true);
 
@@ -189,15 +190,29 @@ export const useFirebaseListeners = (
       return unsubscribe;
     };
 
+    const fetchSealConfig = () => {
+      const unsubscribe = onSnapshot(doc(db, "config", "seal_config"), (docSnap) => {
+        if (docSnap.exists()) {
+          setSealConfig(docSnap.data() as SealConfig);
+        } else {
+          // 若不存在則建立預設值
+          setSealConfig({ activeSeal: 'full-yang' });
+        }
+      });
+      return unsubscribe;
+    };
+
     const unsubSessions = fetchSessions();
     const unsubSlots = fetchTimeSlots();
     const unsubPayments = fetchPaymentMethods();
+    const unsubSeal = fetchSealConfig();
     triggerExitAnimation();
 
     return () => {
       unsubSessions();
       unsubSlots();
       unsubPayments();
+      unsubSeal();
     };
   }, [setFormData]);
 
@@ -214,6 +229,8 @@ export const useFirebaseListeners = (
     setTimeslotConfig,
     paymentMethods,
     setPaymentMethods,
+    sealConfig,
+    setSealConfig,
     isEntryAnimating,
     shouldRenderEntry
   };
