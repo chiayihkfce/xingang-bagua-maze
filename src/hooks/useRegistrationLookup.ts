@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { collection, query, where, getDocs, limit, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
+
 import { db } from "../firebase";
 
 export const useRegistrationLookup = () => {

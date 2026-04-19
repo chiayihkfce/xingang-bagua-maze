@@ -91,7 +91,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           </button>
         </div>
 
-        <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} t={t} />
+        <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
       </section>
     );
   }
@@ -617,12 +617,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         )}
       </form>
 
-      <StatusLookupModal 
-        isOpen={isLookupOpen} 
-        onClose={() => setIsLookupOpen(false)} 
-        lang={lang} 
-        t={t} 
-      />
+      <StatusLookupModal isOpen={isLookupOpen} onClose={() => setIsLookupOpen(false)} lang={lang} />
+
     </section>
   );
 };

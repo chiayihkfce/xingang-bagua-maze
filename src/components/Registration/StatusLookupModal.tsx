@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useRegistrationLookup } from '../../hooks/useRegistrationLookup';
-
 interface StatusLookupModalProps {
   isOpen: boolean;
   onClose: () => void;
   lang: string;
-  t: any;
 }
 
-const StatusLookupModal: React.FC<StatusLookupModalProps> = ({ isOpen, onClose, lang, t }) => {
+const StatusLookupModal: React.FC<StatusLookupModalProps> = ({ isOpen, onClose, lang }) => {
+
   const [keyword, setKeyword] = useState('');
   const { lookupRegistration, loading, results, error, setResults } = useRegistrationLookup();
 
