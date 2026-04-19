@@ -240,45 +240,50 @@ export const generateCertificate = async (data: {
     sCtx.save();
     sCtx.translate(s/2, s/2 - 2);
 
-    // --- 漢文區 (右半邊) ---
+    // --- 漢文區 (右半邊：比例優化版) ---
     sCtx.save();
     sCtx.fillStyle = sealColor;
     sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
-    sCtx.scale(1.05, 1.55); 
+    // 漢文：寬度微縮至 1.35，高度維持 1.55
+    sCtx.scale(1.35, 1.55); 
     sCtx.font = 'bold 44px "LiSu", "STKaiti", "Microsoft JhengHei"';
 
-    const yOff = 38; const rx1 = 65, rx2 = 18; 
-    sCtx.fillText('新', rx1 + jitter(0.5), -yOff * 1.5);
-    sCtx.fillText('港', rx1 + jitter(0.5), -yOff * 0.5);
-    sCtx.fillText('文', rx1 + jitter(0.5),  yOff * 0.5);
-    sCtx.fillText('教', rx1 + jitter(0.5),  yOff * 1.5);
-    sCtx.fillText('基', rx2 + jitter(0.5), -yOff * 1.5);
-    sCtx.fillText('金', rx2 + jitter(0.5), -yOff * 0.5);
-    sCtx.fillText('會', rx2 + jitter(0.5),  yOff * 0.5);
-    sCtx.fillText('印', rx2 + jitter(0.5),  yOff * 1.5);
+    const yOff = 40; 
+    const rx1 = 75, rx2 = 25; 
+    sCtx.fillText('新', rx1, -yOff * 1.5);
+    sCtx.fillText('港', rx1, -yOff * 0.5);
+    sCtx.fillText('文', rx1,  yOff * 0.5);
+    sCtx.fillText('教', rx1,  yOff * 1.5);
+    sCtx.fillText('基', rx2, -yOff * 1.5);
+    sCtx.fillText('金', rx2, -yOff * 0.5);
+    sCtx.fillText('會', rx2,  yOff * 0.5);
+    sCtx.fillText('印', rx2,  yOff * 1.5);
     sCtx.restore();
 
 
-    // --- 滿文區 (左半邊：安全縮放版) ---
+    // --- 滿文區 (左半邊：極致飽滿版) ---
     sCtx.save();
     sCtx.fillStyle = sealColor;
     sCtx.textAlign = 'center'; sCtx.textBaseline = 'middle';
     
-    const mLine1 = "ᠰᡳᠨ ᡤᠠᠩ ᠸᡝᠨ ᠵᡳᠶᠣᠣ"; 
-    const mLine2 = "ᠵᡳ ᠵᡳᠨ ᡥᡡᡳ ᡩᠣᡵᠣᠨ"; // 根據問題.log更新
+    const mL1 = "ᠰᡳᠨ ᡤᠠᠩ ᠸᡝᠨ ᠵᡳᠶᠣᠣ"; 
+    const mL2 = "ᠵᡳ ᠵᡳᠨ ᡥᡡᡳ ᡩᠣᡵᠣᠨ"; 
 
-    const drawLongManchu = (text: string, ox: number) => {
+    const drawManchuSeal = (text: string, ox: number) => {
       sCtx.save();
       sCtx.translate(ox, 0); 
       sCtx.rotate(Math.PI / 2);
-      sCtx.scale(1.3, 1.1); 
+      // 滿文：高度 1.5，寬度極限擴張至 2.1
+      sCtx.scale(1.5, 2.1); 
       sCtx.font = 'bold 36px "Mongolian Baiti", "Noto Sans Mongolian", serif';
       sCtx.fillText(text, 0, 0);
       sCtx.restore();
     };
 
-    drawLongManchu(mLine1, -22); 
-    drawLongManchu(mLine2, -88); 
+    // 修正滿文讀序：第一行(新港文教)放最左邊(-100)，第二行(基金會印)放中心旁(-38)
+    // 達成清代官印「滿文由左往右換行」的正統規範
+    drawManchuSeal(mL1, -100); 
+    drawManchuSeal(mL2, -38); 
     sCtx.restore();
 
     sCtx.restore();
