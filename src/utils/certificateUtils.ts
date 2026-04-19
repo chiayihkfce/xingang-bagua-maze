@@ -33,21 +33,25 @@ export const generateCertificate = async (data: {
   }
   ctx.fillRect(0, 0, w, h);
 
-  // 宣紙/絲絹紋理 (極致纖維感：支援雙色適配)
+  // 宣紙/絲絹紋理 (極致質感修正版：同色批次，15,000 條)
   ctx.save();
-  const fiberColors = isDark ? ['#d4af37', '#444444', '#ffffff', '#222222'] : ['#d4af37', '#999999', '#ffffff', '#c0c0c0', '#f1c40f'];
-  for (let i = 0; i < 25000; i++) {
-    ctx.globalAlpha = isDark ? Math.random() * 0.08 : Math.random() * 0.15;
-    ctx.strokeStyle = fiberColors[Math.floor(Math.random() * fiberColors.length)];
-    ctx.lineWidth = Math.random() * 0.5;
-    
+  const fColors = isDark ? ['#d4af37', '#444444', '#ffffff', '#222222'] : ['#d4af37', '#999999', '#ffffff', '#c0c0c0', '#f1c40f'];
+  const fibersPerColor = 3000;
+  
+  fColors.forEach(color => {
     ctx.beginPath();
-    const x = Math.random() * w, y = Math.random() * h, len = Math.random() * 30 + 5, angle = Math.random() * Math.PI * 2;
-    ctx.moveTo(x, y);
-    ctx.quadraticCurveTo(x + Math.random() * 10 - 5, y + Math.random() * 10 - 5, x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = isDark ? 0.08 : 0.15;
+    ctx.lineWidth = 0.4;
+    for (let i = 0; i < fibersPerColor; i++) {
+      const x = Math.random() * w, y = Math.random() * h, len = Math.random() * 35 + 5, angle = Math.random() * Math.PI * 2;
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + Math.random() * 12 - 6, y + Math.random() * 12 - 6, x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+    }
     ctx.stroke();
-  }
+  });
   ctx.restore();
+
 
   // 3. 太極八卦水印
   ctx.save();
@@ -152,25 +156,26 @@ export const generateCertificate = async (data: {
   ctx.textAlign = 'center';
   ctx.fillText('頒 發 給', centerX, 550);
 
-  // C. 受獎人姓名 (核心視覺 - 氣勢匾額大字)
+  // C. 受獎人姓名 (修復重疊黃線：先描邊後填色)
   ctx.save();
   ctx.textAlign = 'center';
   ctx.font = `bold 200px ${fontAntique}`;
   
-  // 製作多層次匾額雕刻感 (深色投影 -> 實體文字 -> 淡金描邊)
+  // 1. 製作多層次匾額陰影
   ctx.shadowColor = 'rgba(0, 0, 0, 1)';
   ctx.shadowBlur = 20;
   ctx.shadowOffsetX = 10;
   ctx.shadowOffsetY = 10;
   
+  // 2. 先進行金屬描邊 (此時重疊處會有深色，但會被下一步蓋住)
+  ctx.strokeStyle = isDark ? 'rgba(212, 175, 55, 0.5)' : 'rgba(184, 134, 11, 0.3)';
+  ctx.lineWidth = 3;
+  ctx.strokeText(data.name || '挑戰者', centerX, 750);
+
+  // 3. 最後填入實心文字 (壓在描邊上方，完美覆蓋重疊處)
+  ctx.shadowColor = 'transparent'; // 填色時不再重複陰影
   ctx.fillStyle = isDark ? '#ffffff' : '#222222';
   ctx.fillText(data.name || '挑戰者', centerX, 750);
-  
-  // 加上一層超薄的淡金描邊提升質感
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.strokeStyle = isDark ? 'rgba(212, 175, 55, 0.4)' : 'rgba(184, 134, 11, 0.2)';
-  ctx.lineWidth = 2;
-  ctx.strokeText(data.name || '挑戰者', centerX, 750);
   ctx.restore();
 
   // D. 恭賀說明文字 (對稱排版優化)

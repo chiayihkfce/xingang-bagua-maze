@@ -59,7 +59,8 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({
         theme: selectedTheme
       });
       if (dataUrl) {
-        downloadCertificate(dataUrl, `${t.certDownloadName || '成就證書'}_${selectedTheme === 'dark' ? '黑金' : '米白'}.png`);
+        const fileName = `【新港八卦謎蹤】成就證書_${formData.name || '挑戰者'}_${selectedTheme === 'dark' ? '黑金' : '米白'}.png`;
+        downloadCertificate(dataUrl, fileName);
         setHasDownloaded(true);
       }
     } catch (err) {
