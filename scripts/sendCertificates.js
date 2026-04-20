@@ -156,8 +156,12 @@ async function run() {
       let orderSuccess = true;
 
       // 2. 遍歷名單分別寄送
+      let pIdx = 0;
       for (const player of players) {
-        if (!player.email || !player.name) continue;
+        if (!player.email || !player.name) {
+          pIdx++;
+          continue;
+        }
 
         console.log(`  > 正在發送給：${player.name} (${player.email})...`);
         
@@ -168,8 +172,8 @@ async function run() {
             date: playDate 
           });
 
-          // 正式版網址
-          const certUrl = `https://chiayihkfce.github.io/xingang-bagua-maze/?certId=${doc.id}&theme=light`; 
+          // 正式版網址：加入 playerIndex 參數
+          const certUrl = `https://chiayihkfce.github.io/xingang-bagua-maze/?certId=${doc.id}&playerIndex=${pIdx}&theme=light`; 
           
           const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',

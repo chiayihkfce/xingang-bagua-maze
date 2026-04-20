@@ -36,6 +36,7 @@ export const useFirebaseListeners = (
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const certId = urlParams.get('certId');
+    const playerIndex = urlParams.get('playerIndex');
     
     // 關鍵修正：加入 !formData.name 判斷，若已有資料則不再重複抓取
     if (certId && !formData.name && setFormData && setSubmitted && setLastSubmissionId && setCalculatedTotal) {
@@ -45,9 +46,16 @@ export const useFirebaseListeners = (
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
+            
+            // 決定顯示姓名：如果有 playerIndex，則從名單中抓取
+            let displayName = data.name || '';
+            if (playerIndex !== null && data.playerList && data.playerList[Number(playerIndex)]) {
+              displayName = data.playerList[Number(playerIndex)].name;
+            }
+
             setFormData({
               email: data.email || '',
-              name: data.name || '',
+              name: displayName, // 使用決定後的姓名
               countryCode: data.countryCode || '+886',
               phone: data.phone || '',
               contactEmail: data.email || '', // 預設使用同一個 email
