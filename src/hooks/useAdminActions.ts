@@ -50,7 +50,7 @@ export const useAdminActions = ({
         let count = 0;
 
         for (const docId of selectedIds) {
-          const target = submissions.find(row => row[15] === docId);
+          const target = submissions.find(row => row[16] === docId);
           if (target && target[1] !== '通過') {
             const docRef = doc(db, "registrations", docId);
             batch.update(docRef, { status: '通過' });
@@ -85,7 +85,7 @@ export const useAdminActions = ({
         let count = 0;
 
         for (const docId of selectedIds) {
-          const target = submissions.find(row => row[15] === docId);
+          const target = submissions.find(row => row[16] === docId);
           if (target) {
             const sourceRef = doc(db, "registrations", docId);
             const targetRef = doc(db, "registrations_deleted", docId);
@@ -95,8 +95,9 @@ export const useAdminActions = ({
               session: target[5], quantity: target[6], players: target[7], totalAmount: target[8],
               paymentMethod: target[9], bankLast5: target[10], pickupTime: target[11],
               pickupLocation: target[12], referral: target[13], notes: target[14],
-              createdAt: target[16] || serverTimestamp(),
-              certSent: target[17] || false // 補上證書發送狀態
+              playerList: target[19] || [],
+              createdAt: target[17] || serverTimestamp(),
+              certSent: target[18] || false 
             };
 
             batch.set(targetRef, dataToMove);
@@ -123,7 +124,7 @@ export const useAdminActions = ({
    */
   const handleVerifyPayment = async (rowIndex: number, status: string) => {
     const target = submissions[rowIndex];
-    const docId = target[15];
+    const docId = target[16];
     const currentStatus = target[1];
     
     if (!docId) return;
@@ -154,7 +155,7 @@ export const useAdminActions = ({
    */
   const handleDeleteSubmission = async (rowIndex: number) => {
     const target = submissions[rowIndex];
-    const docId = target[15];
+    const docId = target[16];
     if (!docId) return;
     
     showConfirm('確定要將這筆報名資料移至回收桶嗎？', async () => {
@@ -163,14 +164,15 @@ export const useAdminActions = ({
         const sourceRef = doc(db, "registrations", docId);
         const targetRef = doc(db, "registrations_deleted", docId);
         
-        // 構建原始對象 (補上索引 17: certSent)
+        // 構建原始對象
         const dataToMove = {
           timestamp: target[0], status: target[1], name: target[2], phone: target[3], email: target[4],
           session: target[5], quantity: target[6], players: target[7], totalAmount: target[8],
           paymentMethod: target[9], bankLast5: target[10], pickupTime: target[11],
           pickupLocation: target[12], referral: target[13], notes: target[14],
-          createdAt: target[16] || serverTimestamp(),
-          certSent: target[17] || false
+          playerList: target[19] || [],
+          createdAt: target[17] || serverTimestamp(),
+          certSent: target[18] || false
         };
 
         const batch = writeBatch(db);
@@ -194,7 +196,7 @@ export const useAdminActions = ({
    */
   const handleRestoreSubmission = async (rowIndex: number) => {
     const target = deletedSubmissions[rowIndex];
-    const docId = target[15];
+    const docId = target[16];
     if (!docId) return;
     
     setIsSubmitting(true);
@@ -207,8 +209,9 @@ export const useAdminActions = ({
         session: target[5], quantity: target[6], players: target[7], totalAmount: target[8],
         paymentMethod: target[9], bankLast5: target[10], pickupTime: target[11],
         pickupLocation: target[12], referral: target[13], notes: target[14],
-        createdAt: target[16] || serverTimestamp(),
-        certSent: target[17] || false,
+        playerList: target[19] || [],
+        createdAt: target[17] || serverTimestamp(),
+        certSent: target[18] || false,
         deleted: false // 還原後標記為未刪除
       };
 
@@ -292,7 +295,8 @@ export const useAdminActions = ({
       session: row[5], quantity: row[6], players: row[7], totalAmount: row[8], 
       paymentMethod: row[9], bankLast5: row[10], pickupTime: rawTime, 
       pickupLocation: row[12], referral: row[13], notes: row[14],
-      id: row[15] 
+      playerList: row[19] || [], // 載入原始隊員清單供編輯
+      id: row[16] 
     });
     setIsEditing(true);
   };

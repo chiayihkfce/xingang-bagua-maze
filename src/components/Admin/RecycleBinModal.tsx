@@ -68,7 +68,7 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({
               </thead>
               <tbody>
                 {rows.map((row, i) => (
-                  <tr key={row[15] || i}>
+                  <tr key={row[16] || i}>
                     <td>
                       <button 
                         onClick={() => handleRestore(i)} 

@@ -14,7 +14,7 @@ const RegistrationPage: React.FC = () => {
   const {
     t, lang, setLang, theme, toggleTheme, formData, formErrors, sessionType, 
     setSessionType, sessions, timeslotConfig, generalTimeSlots, specialTimeSlots, 
-    handleInputChange, handleCheckboxChange, handleDateChange, handleCopyAccount, 
+    handleInputChange, handlePlayerInfoChange, handleCheckboxChange, handleDateChange, handleCopyAccount, 
     handleSubmit, isSubmitting, calculatedTotal, getSessionDisplayName, 
     getPickupLocationDisplay, getPaymentMethodDisplay, paymentMethods, 
     isEntryAnimating, shouldRenderEntry, showConfirmation, setShowConfirmation, 
@@ -43,7 +43,7 @@ const RegistrationPage: React.FC = () => {
           {...{ 
             t, lang, formData, formErrors, sessionType, setSessionType, 
             sessions, timeslotConfig, generalTimeSlots, specialTimeSlots, 
-            handleInputChange, handleCheckboxChange, handleDateChange, 
+            handleInputChange, handlePlayerInfoChange, handleCheckboxChange, handleDateChange, 
             handleCopyAccount, handleSubmit, isSubmitting, calculatedTotal, 
             getSessionDisplayName, paymentMethods 
           }} 

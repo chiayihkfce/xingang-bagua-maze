@@ -54,6 +54,7 @@ export const useFirebaseListeners = (
               session: data.session || '',
               quantity: String(data.quantity || '1'),
               players: String(data.players || '1'),
+              playerList: data.playerList || [{ name: data.name || '', email: data.email || '' }], // 恢復隊員名單
               totalAmount: String(data.totalAmount || '0'),
               paymentMethod: data.paymentMethod || '',
               bankLast5: data.bankLast5 || '',

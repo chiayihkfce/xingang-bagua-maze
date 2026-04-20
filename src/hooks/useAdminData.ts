@@ -53,7 +53,7 @@ export const useAdminData = ({
     if (!isAdmin) return;
 
     setIsDataLoading(true);
-    const header = ["報名時間", "狀態", "姓名", "電話", "Email", "場次名稱", "購買份數", "遊玩人數", "隊員名單", "總金額", "付款方式", "末五碼", "預約日期時間", "取件地點", "得知管道", "備註"];
+    const header = ["報名時間", "狀態", "姓名", "電話", "Email", "場次名稱", "購買份數", "遊玩人數", "總金額", "付款方式", "末五碼", "預約日期時間", "取件地點", "得知管道", "備註", "隊員名單"];
     
     setSubmissions([header]);
     setTotalRows(0);
@@ -84,14 +84,13 @@ export const useAdminData = ({
         
         return [
           d.timestamp, d.status, d.name, d.phone, d.email, d.session, d.quantity, 
-          d.players, playerNamesStr, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
-          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent // 索引 16 以後是輔助資訊
+          d.players, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
+          d.pickupLocation, d.referral, d.notes, playerNamesStr, doc.id, d.createdAt, d.certSent, d.playerList // 19: playerList raw
         ];
       });
 
-      // 過濾掉標記為 deleted 的資料 (防範萬一資料未被刪除只被標記)
-      data = data.filter(row => row[18] !== true); 
-
+      // 移除原本錯誤的 row[18] 過濾，確保資料全數顯示
+      
       if (adminFilterDate) {
         const formattedDate = `${adminFilterDate.getFullYear()}-${String(adminFilterDate.getMonth() + 1).padStart(2, '0')}-${String(adminFilterDate.getDate()).padStart(2, '0')}`;
         data = data.filter(row => String(row[11] || '').startsWith(formattedDate));
@@ -114,8 +113,8 @@ export const useAdminData = ({
         const playerNamesStr = (d.playerList || []).map((p: any, i: number) => `${i+1}.${p.name}(${p.email})`).join(', ');
         return [
           d.timestamp, d.status, d.name, d.phone, d.email, d.session, d.quantity, 
-          d.players, playerNamesStr, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
-          d.pickupLocation, d.referral, d.notes, doc.id, d.createdAt, d.certSent
+          d.players, d.totalAmount, d.paymentMethod, d.bankLast5, d.pickupTime, 
+          d.pickupLocation, d.referral, d.notes, playerNamesStr, doc.id, d.createdAt, d.certSent, d.playerList
         ];
       });
       setDeletedSubmissions(data);

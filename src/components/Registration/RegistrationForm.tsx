@@ -327,13 +327,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
               {/* 多人名單登記區塊 - 僅在人數大於 1 時顯示 */}
               {Number(formData.players) > 1 && (
                 <div className="player-list-section" style={{ marginTop: '1.5rem' }}>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '0.5rem', borderLeft: '3px solid var(--accent-orange)', paddingLeft: '10px' }}>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '1rem', borderLeft: '3px solid var(--accent-orange)', paddingLeft: '10px' }}>
                     {lang === 'en' ? 'Player Details:' : '隊員名單資料:'}
-                  </p>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem', paddingLeft: '13px' }}>
-                    {lang === 'en' 
-                      ? 'Note: Pre-event notifications are sent only to Player 1. Individual certificates will be sent to each player email.' 
-                      : '註：行前通知僅寄送給隊員 1 (隊長)，電子成就證書將分別寄送給每位隊員。'}
                   </p>
                   {formData.playerList.map((player, index) => (
                     <div key={index} className="player-input-row" style={{ 
