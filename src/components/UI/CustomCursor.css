@@ -65,9 +65,17 @@
   to { transform: rotate(360deg); }
 }
 
-/* 行動裝置隱藏邏輯保持不變 */
+/* 在觸控裝置（手機、平板）上徹底隱藏客製鼠標 */
+@media (pointer: coarse) {
+  .custom-cursor-dot, 
+  .custom-cursor-ring {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
 
-/* 在純觸控裝置上徹底隱藏客製鼠標 (移除 max-width 避免螢幕縮放時誤判為手機) */
+/* 額外的隱藏邏輯，針對不支援 Hover 的裝置 */
 @media (any-hover: none) {
   .custom-cursor-dot, 
   .custom-cursor-ring {
