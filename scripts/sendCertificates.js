@@ -120,6 +120,7 @@ async function drawCertificateImage(data) {
   ctx.fillText('新港文教', s/2, s/2 - 13); ctx.fillText('基金會印', s/2, s/2 + 13); ctx.restore();
 
   // 定死品質 0.3。體積保證在 20-30KB。
+  // 修正：移除 data:image/jpeg;base64, 前綴，改由 Email 模板處理
   return canvas.toBuffer('image/jpeg', { quality: 0.3 }).toString('base64');
 }
 
@@ -207,6 +208,9 @@ async function run() {
       }
     }
     console.log(`[任務完成] 本次共成功處理 ${successCount} 筆訂單的證書發送。`);
-
+  } catch (err) {
+    console.error('執行報錯:', err);
+  }
+}
 
 run();
