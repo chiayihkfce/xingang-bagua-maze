@@ -207,7 +207,7 @@ async function run() {
         successCount++;
       }
     }
-    console.log(`[任務完成] 本次共成功處理 ${successCount} 筆訂單的證書發送。`);
+    console.log(`[自動任務] 已成功發送 ${successCount} 筆訂單的所有證書。`);
   } catch (err) {
     console.error('執行報錯:', err);
   }
