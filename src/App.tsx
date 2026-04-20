@@ -32,6 +32,9 @@ function AppContent() {
 
 function App() {
   useEffect(() => {
+    // 0. 強制設定網頁標題
+    document.title = "新港八卦謎蹤";
+
     // 1. Google Analytics 4 (GA4) 注入邏輯
     const GA_MEASUREMENT_ID = 'G-CFNQQ2LKD5';
     
