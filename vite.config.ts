@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import javascriptObfuscator from 'vite-plugin-javascript-obfuscator'
-import { viteSingleFile } from "vite-plugin-singlefile"
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,17 +20,19 @@ export default defineConfig({
         stringArrayEncoding: ['base64'],
         stringArrayThreshold: 0.75,
       },
-    }),
-    viteSingleFile()
+    })
     ],
     base: './', 
     build: {
     sourcemap: false,
-    assetsInlineLimit: 0, 
-    cssCodeSplit: false,
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
-        inlineDynamicImports: true,
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-utils': ['xlsx', 'gsap', 'recharts'],
+          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+        },
       },
     },
   }

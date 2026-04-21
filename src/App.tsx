@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import "react-datepicker/dist/react-datepicker.css"
 import './App.css'
 import { registerLocale } from "react-datepicker";
@@ -8,9 +8,22 @@ import { AppProvider, useAppContext } from './context/AppContext'
 // 註冊語系
 registerLocale('zh', zhTW as any);
 
-import SuccessPage from './pages/SuccessPage'
-import AdminPage from './pages/AdminPage'
-import RegistrationPage from './pages/RegistrationPage'
+// 使用 Lazy Loading 延遲載入頁面
+const SuccessPage = lazy(() => import('./pages/SuccessPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
+
+/**
+ * 載入中畫面
+ */
+const LoadingFallback = () => (
+  <div style={{ 
+    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', 
+    backgroundColor: '#0a0a0a', color: '#c1a57b' 
+  }}>
+    <div className="loading-spinner">載入中...</div>
+  </div>
+);
 
 /**
  * 應用程式內容區：負責根據 Context 狀態切換頁面
@@ -19,15 +32,21 @@ function AppContent() {
   const app = useAppContext();
   const { SECRET_ADMIN_PATH, currentPath, submitted } = app;
 
-  if (SECRET_ADMIN_PATH && SECRET_ADMIN_PATH !== '/' && currentPath === SECRET_ADMIN_PATH) {
-    return <AdminPage />;
-  }
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      {(() => {
+        if (SECRET_ADMIN_PATH && SECRET_ADMIN_PATH !== '/' && currentPath === SECRET_ADMIN_PATH) {
+          return <AdminPage />;
+        }
 
-  if (submitted) {
-    return <SuccessPage />;
-  }
+        if (submitted) {
+          return <SuccessPage />;
+        }
 
-  return <RegistrationPage />;
+        return <RegistrationPage />;
+      })()}
+    </Suspense>
+  );
 }
 
 function App() {
