@@ -83,60 +83,62 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
             <h2 style={{ color: 'var(--primary-gold)', fontSize: '1.8rem', marginBottom: '30px' }}>{t.quizTitle}</h2>
 
             <div className="quiz-container" style={{ 
-              position: 'relative', width: '320px', height: '320px', margin: '0 auto',
-              filter: 'drop-shadow(0 0 10px rgba(212, 175, 55, 0.4))' // 為整個八角盤加上金色發光
+              position: 'relative', width: '320px', height: '320px', margin: '0 auto'
             }}>
-              {/* 八邊形底層 (作為金邊) */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'var(--primary-gold)',
-                clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-                zIndex: 1
-              }}></div>
-
-              {/* 指針 */}
+              {/* 指針 (不動) */}
               <div style={{
                 position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)',
                 width: '0', height: '0', borderLeft: '15px solid transparent', borderRight: '15px solid transparent',
                 borderTop: '30px solid var(--accent-orange)', zIndex: 10
               }}></div>
 
-              {/* 旋轉八卦盤面 (縮小 4px 以露出底層的金邊) */}
+              {/* 整個旋轉體 (金邊 + 盤面) */}
               <div ref={wheelRef} style={{ 
-                position: 'absolute', top: '4px', left: '4px', 
-                width: 'calc(100% - 8px)', height: 'calc(100% - 8px)',
-                display: 'flex', justifyContent: 'center', alignItems: 'center',
-                zIndex: 2,
-                clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-                background: 'radial-gradient(circle, #222 0%, #111 100%)'
+                width: '100%', height: '100%', position: 'relative',
+                filter: 'drop-shadow(0 0 10px rgba(212, 175, 55, 0.4))'
               }}>
-                {/* 八卦方位文字 */}
-                {BAGUAS.map((b, i) => (
-                  <div key={b} style={{
-                    position: 'absolute', transform: `rotate(${i * 45}deg) translateY(-115px)`, 
-                    fontSize: '1.6rem', fontWeight: 'bold', color: '#c1a57b', width: '45px',
-                    textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)'
-                  }}>{b}</div>
-                ))}
-                
-                {/* 中心區域：金色外圓框 + 純 CSS 繪製的黑白太極 */}
+                {/* 金色底層 */}
                 <div style={{
-                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                  width: '85px', height: '80px', borderRadius: '50%',
-                  border: '3px solid var(--primary-gold)', background: '#000',
-                  zIndex: 5, overflow: 'hidden', pointerEvents: 'none',
-                  boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                  background: 'var(--primary-gold)',
+                  clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                }}></div>
+
+                {/* 盤面內容 */}
+                <div style={{ 
+                  position: 'absolute', top: '4px', left: '4px', 
+                  width: 'calc(100% - 8px)', height: 'calc(100% - 8px)',
+                  display: 'flex', justifyContent: 'center', alignItems: 'center',
+                  clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                  background: 'radial-gradient(circle, #222 0%, #111 100%)'
                 }}>
+                  {/* 八卦方位文字 */}
+                  {BAGUAS.map((b, i) => (
+                    <div key={b} style={{
+                      position: 'absolute', transform: `rotate(${i * 45}deg) translateY(-115px)`, 
+                      fontSize: '1.6rem', fontWeight: 'bold', color: '#c1a57b', width: '45px',
+                      textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                    }}>{b}</div>
+                  ))}
+                  
+                  {/* 中心太極 */}
                   <div style={{
-                    width: '100%', height: '100%', borderRadius: '50%',
-                    background: 'linear-gradient(to right, #fff 50%, #000 50%)',
-                    position: 'relative'
+                    position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                    width: '85px', height: '80px', borderRadius: '50%',
+                    border: '3px solid var(--primary-gold)', background: '#000',
+                    zIndex: 5, overflow: 'hidden'
                   }}>
-                    <div style={{ position: 'absolute', top: 0, left: '25%', width: '50%', height: '50%', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <div style={{ width: '25%', height: '25%', background: '#000', borderRadius: '50%' }}></div>
-                    </div>
-                    <div style={{ position: 'absolute', bottom: 0, left: '25%', width: '50%', height: '50%', background: '#000', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <div style={{ width: '25%', height: '25%', background: '#fff', borderRadius: '50%' }}></div>
+                    <div style={{
+                      width: '100%', height: '100%', borderRadius: '50%',
+                      background: 'linear-gradient(to right, #fff 50%, #000 50%)',
+                      position: 'relative'
+                    }}>
+                      <div style={{ position: 'absolute', top: 0, left: '25%', width: '50%', height: '50%', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <div style={{ width: '25%', height: '25%', background: '#000', borderRadius: '50%' }}></div>
+                      </div>
+                      <div style={{ position: 'absolute', bottom: 0, left: '25%', width: '50%', height: '50%', background: '#000', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <div style={{ width: '25%', height: '25%', background: '#fff', borderRadius: '50%' }}></div>
+                      </div>
                     </div>
                   </div>
                 </div>
