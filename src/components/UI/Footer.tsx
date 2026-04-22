@@ -50,7 +50,16 @@ const Footer: React.FC<FooterProps> = ({ t }) => {
     <footer className="footer">
       <div className="footer-content">
         <h3>{t.contactInfo}</h3>
-        <p>{t.foundationName}</p>
+        <p>
+          <a 
+            href="https://www.hkfce.org.tw/tw" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ color: 'inherit', textDecoration: 'none' }}
+          >
+            {t.foundationName}
+          </a>
+        </p>
         <p>
           <a 
             href="https://www.google.com.tw/maps/place/%E8%B2%A1%E5%9C%98%E6%B3%95%E4%BA%BA%E6%96%B0%E6%B8%AF%E6%96%87%E6%95%99%E5%9F%BA%E9%87%91%E6%9C%83/@23.5600241,120.3436242,17z/data=!4m5!3m4!1s0x346ebd52d25d3f79:0xee3b4c7708b19c2e!8m2!3d23.5598989!4d120.3437709?hl=zh-TW&shorturl=1" 
