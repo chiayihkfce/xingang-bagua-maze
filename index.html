@@ -28,8 +28,21 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('SW registered'))
+          navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+            .then(reg => {
+              console.log('SW registered');
+              // 檢查是否有更新，如果有則立刻強制接管
+              reg.onupdatefound = () => {
+                const installingWorker = reg.installing;
+                if (installingWorker) {
+                  installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      window.location.reload();
+                    }
+                  };
+                }
+              };
+            })
             .catch(err => console.log('SW error:', err));
         });
       }
