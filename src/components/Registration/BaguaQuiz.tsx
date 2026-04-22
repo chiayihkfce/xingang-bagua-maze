@@ -130,7 +130,7 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
           boxSizing: 'border-box'
         }}
       >
-        <span className="entry-icon">☯</span>
+        <span className="entry-icon" style={{ display: 'inline-block', transform: 'rotate(90deg)' }}>☯</span>
         <span className="entry-title">{t.quizTitle}</span>
         <span className="entry-desc">{t.quizIntro}</span>
         <div style={{ marginTop: '10px', color: 'var(--accent-orange)', fontWeight: 'bold', fontSize: '0.9rem' }}>
@@ -207,18 +207,18 @@ const BaguaQuiz: React.FC<BaguaQuizProps> = ({ t, lang }) => {
                     border: '3px solid var(--primary-gold)', background: '#000',
                     zIndex: 5, overflow: 'hidden'
                   }}>
-                    <div style={{
-                      width: '100%', height: '100%', borderRadius: '50%',
-                      background: 'linear-gradient(to right, #fff 50%, #000 50%)',
-                      position: 'relative'
-                    }}>
-                      <div style={{ position: 'absolute', top: 0, left: '25%', width: '50%', height: '50%', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div style={{ width: '25%', height: '25%', background: '#000', borderRadius: '50%' }}></div>
-                      </div>
-                      <div style={{ position: 'absolute', bottom: 0, left: '25%', width: '50%', height: '50%', background: '#000', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div style={{ width: '25%', height: '25%', background: '#fff', borderRadius: '50%' }}></div>
-                      </div>
+                  <div style={{
+                    width: '100%', height: '100%', borderRadius: '50%',
+                    background: 'linear-gradient(to right, #fff 50%, #000 50%)',
+                    position: 'relative'
+                  }}>
+                    <div style={{ position: 'absolute', top: 0, left: '25%', width: '50%', height: '50%', background: '#fff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <div style={{ width: '25%', height: '25%', background: '#000', borderRadius: '50%' }}></div>
                     </div>
+                    <div style={{ position: 'absolute', bottom: 0, left: '25%', width: '50%', height: '50%', background: '#000', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <div style={{ width: '25%', height: '25%', background: '#fff', borderRadius: '50%' }}></div>
+                    </div>
+                  </div>
                   </div>
                 </div>
               </div>
