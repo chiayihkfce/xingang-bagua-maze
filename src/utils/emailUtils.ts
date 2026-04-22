@@ -16,10 +16,16 @@ export const sendPaymentSuccessEmail = async (submissionRow: any[]) => {
   }
 
   try {
+    // 格式化電話號碼：將 +886 轉換為 0
+    let formattedPhone = submissionRow[3] || '';
+    if (formattedPhone.startsWith('+886')) {
+      formattedPhone = '0' + formattedPhone.substring(4);
+    }
+
     const templateParams = {
       to_email: submissionRow[4],
       name: submissionRow[2],
-      phone: submissionRow[3],
+      phone: formattedPhone,
       session: submissionRow[5],
       pickupTime: submissionRow[11],
       players: submissionRow[7],
