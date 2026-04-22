@@ -2,16 +2,38 @@
   "name": "新港八卦謎蹤",
   "short_name": "八卦謎蹤",
   "description": "穿梭光緒與昭和，解開隱藏在新港古鎮中的時空謎團。",
-  "start_url": ".",
-  "scope": "/xingang-bagua-maze/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#1a1a1a",
   "theme_color": "#f1c40f",
   "icons": [
     {
       "src": "app-icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["games", "education"],
+  "shortcuts": [
+    {
+      "name": "開始闖關",
+      "url": "./index.html",
+      "description": "立即開始您的冒險"
     }
   ]
 }
