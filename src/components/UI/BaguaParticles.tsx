@@ -11,14 +11,8 @@ const BaguaParticles: React.FC = () => {
 
     let particles: Particle[] = [];
     let clouds: Cloud[] = [];
-    const particleCount = 35; // 大幅削減，解決卡頓
-    const cloudCount = 8;     // 大幅削減
-    const symbols = [
-      '☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷', 
-      '🥕', '🥕', '🥕', 
-      '🥚', '🥚', '🥚', 
-      '🪶', '🪶', '🪶', '🪶', '🪶'
-    ];
+    const cloudCount = 8;
+    const symbols = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷', '🥕', '🥚', '🪶'];
 
     class Cloud {
       x: number;
@@ -28,26 +22,40 @@ const BaguaParticles: React.FC = () => {
       speedX: number;
 
       constructor() {
-        this.x = Math.random() * canvas!.width;
-        this.y = Math.random() * canvas!.height;
-        this.baseRadius = Math.random() * 100 + 80;
+        this.baseRadius = Math.random() * 120 + 100;
         this.speedX = Math.random() * 0.08 + 0.02;
-        
-        // 減少內部圓球數量 (對效能影響最大)，降至 6 個
-        this.blobs = Array.from({ length: 6 }).map(() => ({
-          ox: Math.random() * 160 - 80,
-          oy: Math.random() * 50 - 25,
-          r: Math.random() * 0.8 + 0.5,
-          o: Math.random() * 0.02 + 0.01
+        this.blobs = Array.from({ length: 12 }).map(() => ({
+          ox: Math.random() * 200 - 100,
+          oy: Math.random() * 80 - 40,
+          r: Math.random() * 0.9 + 0.6,
+          o: Math.random() * 0.05 + 0.02 // 顏色深一點
         }));
+        this.x = 0; this.y = 0;
+        this.resetPosition();
+      }
+
+      resetPosition() {
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+        let valid = false;
+        while (!valid) {
+          this.x = Math.random() * canvas!.width;
+          this.y = Math.random() * canvas!.height;
+          const dist = Math.hypot(this.x - centerX, this.y - centerY);
+          if (dist > 350) valid = true; // 避開中心
+        }
       }
 
       update() {
         this.x += this.speedX;
         if (this.x - 400 > canvas!.width) {
           this.x = -400;
-          this.y = Math.random() * canvas!.height;
+          this.resetPosition();
         }
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+        const dist = Math.hypot(this.x - centerX, this.y - centerY);
+        if (dist < 300) this.y += (this.y > centerY ? 1 : -1);
       }
 
       draw() {
@@ -58,12 +66,9 @@ const BaguaParticles: React.FC = () => {
           const gx = this.x + b.ox;
           const gy = this.y + b.oy;
           const gradient = ctx.createRadialGradient(gx, gy, 0, gx, gy, r);
-          
-          // 雲朵層次：純白色漸變疊加
           gradient.addColorStop(0, `rgba(255, 255, 255, ${b.o})`);
-          gradient.addColorStop(0.6, `rgba(255, 255, 255, ${b.o * 0.3})`);
+          gradient.addColorStop(0.6, `rgba(200, 200, 200, ${b.o * 0.5})`);
           gradient.addColorStop(1, 'transparent');
-          
           ctx.fillStyle = gradient;
           ctx.beginPath();
           ctx.arc(gx, gy, r, 0, Math.PI * 2);
@@ -84,27 +89,46 @@ const BaguaParticles: React.FC = () => {
       rotation: number;
       rotationSpeed: number;
 
-      constructor() {
-        this.x = Math.random() * canvas!.width;
-        this.y = Math.random() * canvas!.height;
-        this.size = Math.random() * 25 + 20; // 增大尺寸
-        this.speedX = Math.random() * 0.6 - 0.3;
-        this.speedY = Math.random() * 0.6 - 0.3;
-        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
-        this.opacity = Math.random() * 0.15 + 0.05; // 調高透明度
+      constructor(symbol: string) {
+        this.symbol = symbol;
+        this.size = Math.random() * 20 + 30;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
+        this.opacity = Math.random() * 0.2 + 0.1;
         this.rotation = Math.random() * Math.PI * 2;
         this.rotationSpeed = Math.random() * 0.02 - 0.01;
+        this.x = 0; this.y = 0;
+        this.resetPosition();
+      }
+
+      resetPosition() {
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+        let valid = false;
+        while (!valid) {
+          this.x = Math.random() * canvas!.width;
+          this.y = Math.random() * canvas!.height;
+          const dist = Math.hypot(this.x - centerX, this.y - centerY);
+          if (dist > 250) valid = true;
+        }
       }
 
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
         this.rotation += this.rotationSpeed;
-
         if (this.x > canvas!.width) this.x = 0;
         if (this.x < 0) this.x = canvas!.width;
         if (this.y > canvas!.height) this.y = 0;
         if (this.y < 0) this.y = canvas!.height;
+
+        const centerX = canvas!.width / 2;
+        const centerY = canvas!.height / 2;
+        const dist = Math.hypot(this.x - centerX, this.y - centerY);
+        if (dist < 220) {
+          this.x += (this.x > centerX ? 2 : -2);
+          this.y += (this.y > centerY ? 2 : -2);
+        }
       }
 
       draw() {
@@ -123,95 +147,16 @@ const BaguaParticles: React.FC = () => {
     const init = () => {
       particles = [];
       clouds = [];
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-      for (let i = 0; i < cloudCount; i++) {
-        clouds.push(new Cloud());
-      }
-    };
-
-    let taijiRotation = 0;
-    const drawTaijiBase = () => {
-      if (!ctx) return;
-      const size = Math.min(canvas.width, canvas.height) * 0.8;
-      const x = canvas.width / 2;
-      const y = canvas.height / 2;
-      const r = size / 2;
-
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(taijiRotation);
-      ctx.globalAlpha = 0.04;
-
-      // 1. 底色與外框 (金色)
-      ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // 2. 左側白色半圓 (陽)
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(0, 0, r, Math.PI / 2, Math.PI * 1.5);
-      ctx.fill();
-
-      // 3. 右側黑色半圓 (陰)
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(0, 0, r, Math.PI * 1.5, Math.PI / 2);
-      ctx.fill();
-
-      // 4. 上下中圓形成 S 曲線
-      // 上方白色中圓
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(0, -r / 2, r / 2, 0, Math.PI * 2);
-      ctx.fill();
-      // 下方黑色中圓
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(0, r / 2, r / 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 5. 魚眼 (兩側小圓點)
-      // 上方黑色魚眼 (在白色中圓內)
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(0, -r / 2, r / 8, 0, Math.PI * 2);
-      ctx.fill();
-      // 下方白色魚眼 (在黑色中圓內)
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(0, r / 2, r / 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-      taijiRotation += 0.0015;
+      symbols.forEach(s => particles.push(new Particle(s)));
+      for (let i = 0; i < cloudCount; i++) clouds.push(new Cloud());
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // 1. 第一層：部分八卦粒子 (背景層)
-      particles.slice(0, particleCount / 2).forEach(p => {
-        p.update();
-        p.draw();
-      });
-
-      // 2. 第二層：雲霧層 (淡白色疊加)
-      clouds.forEach(c => {
-        c.update();
-        c.draw();
-      });
-      
-      // 3. 第三層：剩餘八卦粒子 (前景層)
-      particles.slice(particleCount / 2).forEach(p => {
-        p.update();
-        p.draw();
-      });
-
+      const half = Math.floor(particles.length / 2);
+      particles.slice(0, half).forEach(p => { p.update(); p.draw(); });
+      clouds.forEach(c => { c.update(); c.draw(); });
+      particles.slice(half).forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
     };
 
@@ -224,7 +169,6 @@ const BaguaParticles: React.FC = () => {
     window.addEventListener('resize', handleResize);
     handleResize();
     animate();
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -243,7 +187,7 @@ const BaguaParticles: React.FC = () => {
           opacity: 0.6
         }}
       />
-      {/* 背景中央太極基座 (同步 EntryAnimation 樣式) */}
+      {/* 背景中央太極基座 */}
       <div style={{
         position: 'fixed',
         top: 0,
@@ -259,7 +203,7 @@ const BaguaParticles: React.FC = () => {
         <div style={{
           width: 'min(80vw, 80vh)',
           height: 'min(80vw, 80vh)',
-          opacity: 0.03, // 極淡
+          opacity: 0.03,
           borderRadius: '50%',
           overflow: 'hidden',
           border: '2px solid var(--primary-gold)',
@@ -272,7 +216,6 @@ const BaguaParticles: React.FC = () => {
             background: 'linear-gradient(to right, #fff 50%, #000 50%)',
             position: 'relative'
           }}>
-            {/* 陽魚眼 */}
             <div style={{
               position: 'absolute', top: 0, left: '25%', width: '50%', height: '50%',
               background: '#fff', borderRadius: '50%',
@@ -280,7 +223,6 @@ const BaguaParticles: React.FC = () => {
             }}>
               <div style={{ width: '20%', height: '20%', background: '#000', borderRadius: '50%' }}></div>
             </div>
-            {/* 陰魚眼 */}
             <div style={{
               position: 'absolute', bottom: 0, left: '25%', width: '50%', height: '50%',
               background: '#000', borderRadius: '50%',

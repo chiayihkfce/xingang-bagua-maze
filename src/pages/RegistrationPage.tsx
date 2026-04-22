@@ -1,6 +1,7 @@
 import React from 'react';
 import CustomCursor from '../components/UI/CustomCursor';
 import Header from '../components/UI/Header';
+import BaguaParticles from '../components/UI/BaguaParticles';
 import StorySection from '../components/Registration/StorySection';
 import EventInfo from '../components/Registration/EventInfo';
 import RegistrationForm from '../components/Registration/RegistrationForm';
@@ -24,6 +25,7 @@ const RegistrationPage: React.FC = () => {
   return (
     <div className="container">
       <CustomCursor />
+      <BaguaParticles />
       <RegistrationOverlays 
         {...{ 
           t, lang, isEntryAnimating, shouldRenderEntry, showConfirmation, 

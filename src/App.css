@@ -46,6 +46,9 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+  background-color: var(--bg-color);
+  position: relative;
+  z-index: 5;
 }
 
 @media (max-width: 600px) {
@@ -108,9 +111,20 @@ body {
   display: block;
 }
 
+/* 主內容區域 */
+.main-content {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10; /* 確保內容在背景之上 */
+}
+
 /* 區塊容器樣式 */
 .story-box, .event-info {
-  background: var(--container-bg);
+  background: var(--card-bg); /* 強制使用不透明背景 */
   padding: 2rem;
   border-radius: 20px;
   margin-bottom: 3rem;
