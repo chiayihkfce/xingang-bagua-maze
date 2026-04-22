@@ -3,11 +3,12 @@
   "name": "新港八卦謎蹤",
   "short_name": "八卦謎蹤",
   "description": "穿梭光緒與昭和，解開隱藏在新港古鎮中的時空謎團。",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "orientation": "portrait",
-  "background_color": "#1a1a1a",
+  "background_color": "#f1c40f",
   "theme_color": "#f1c40f",
   "icons": [
     {
@@ -33,7 +34,7 @@
   "shortcuts": [
     {
       "name": "開始闖關",
-      "url": "./index.html",
+      "url": "index.html",
       "description": "立即開始您的冒險"
     }
   ]
