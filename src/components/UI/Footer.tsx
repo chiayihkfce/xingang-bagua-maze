@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 interface FooterProps {
   t: any;
@@ -7,7 +7,7 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ t }) => {
   const [clickCount, setClickCount] = useState(0);
   const [showEgg, setShowEgg] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<any>(null);
 
   const handleEggTrigger = (e: React.MouseEvent) => {
     // 防止點擊圖片時直接跳轉外部網頁 (如果是在開發彩蛋期間)
