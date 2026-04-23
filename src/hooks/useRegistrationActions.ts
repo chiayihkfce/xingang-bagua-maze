@@ -87,23 +87,11 @@ export const useRegistrationActions = ({
     try {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
-        mode: 'no-cors', // 使用 no-cors 以避開 GAS 的 CORS 限制
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'new_registration',
-          id: data.id || data.lastSubmissionId, // 確保傳送 ID
-          name: data.name,
-          phone: data.phone,
-          email: data.email,
-          session: data.session,
-          pickupTime: data.pickupTime,
-          amount: data.totalAmount,
-          players: data.players,
-          quantity: data.quantity, // 份數
-          paymentMethod: data.paymentMethod,
-          bankLast5: data.bankLast5, // 末五碼
-          notes: data.notes,
-          pickupLocation: data.pickupLocation // 報到地點
+          ...data // 直接展開所有資料，包含 id
         })
       });
     } catch (e) {
@@ -135,11 +123,13 @@ export const useRegistrationActions = ({
       };
 
       const docRef = await addDoc(collection(db, "registrations"), submissionData);
+      const finalData = { ...submissionData, id: docRef.id }; // 包含新產生的 ID
       setLastSubmissionId(docRef.id);
+      
       await addLog('報名提交', `${formData.name} 提交了報名 (${formData.session})`);
       
       // 成功後傳送 LINE 通知
-      sendLineNotification(submissionData);
+      sendLineNotification(finalData);
       
       return docRef.id;
     } catch (err) {
