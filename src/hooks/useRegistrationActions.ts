@@ -126,10 +126,14 @@ export const useRegistrationActions = ({
       const finalData = { ...submissionData, id: docRef.id }; // 包含新產生的 ID
       setLastSubmissionId(docRef.id);
       
-      await addLog('報名提交', `${formData.name} 提交了報名 (${formData.session})`);
-      
-      // 成功後傳送 LINE 通知
+      // 🚀 關鍵修正：先傳送 LINE 通知 (不等待)，避免被後續 addLog 阻塞
       sendLineNotification(finalData);
+      
+      try {
+        await addLog('報名提交', `${formData.name} 提交了報名 (${formData.session})`);
+      } catch (logErr) {
+        console.error("Log failed:", logErr);
+      }
       
       return docRef.id;
     } catch (err) {
