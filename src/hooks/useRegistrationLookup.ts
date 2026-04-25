@@ -26,11 +26,14 @@ export const useRegistrationLookup = () => {
 
       // 智慧校正台灣格式
       if (cleanKeyword.startsWith('+88609')) {
-        queryList.add('+886' + cleanKeyword.substring(5)); // 修正版
+        queryList.add('+886' + cleanKeyword.substring(5)); // 修正版 (+8869...)
+        queryList.add('09' + cleanKeyword.substring(5));   // 純手機版 (09...)
       } else if (/^09\d{8}$/.test(cleanKeyword)) {
-        queryList.add('+886' + cleanKeyword.substring(1)); // 國碼版
+        queryList.add(cleanKeyword);                       // 保留原始 09... 格式 (新格式)
+        queryList.add('+886' + cleanKeyword.substring(1)); // 國碼版 (舊格式)
         queryList.add('+8860' + cleanKeyword.substring(1)); // 容錯版 (帶零國碼)
       } else if (/^9\d{8}$/.test(cleanKeyword)) {
+        queryList.add('0' + cleanKeyword);                 // 補 0 版
         queryList.add('+886' + cleanKeyword);
       }
 
