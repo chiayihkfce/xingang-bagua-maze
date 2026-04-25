@@ -41,9 +41,16 @@ export const formatPhoneForDB = (countryCode: string, phone: string): string => 
   if (countryCode === 'landline') return `市內電話${phone}`;
   
   let cleanPhone = phone.trim();
-  // 針對台灣手機號碼進行去零標準化 (+886 09... -> +8869...)
-  if (countryCode === '+886' && cleanPhone.startsWith('0')) {
-    cleanPhone = cleanPhone.substring(1);
+
+  // 針對台灣號碼的特別處理：如果選擇了 +886 且輸入是以 0 開頭 (如 09...)
+  // 則直接回傳該號碼 (不帶 +886)，確保存入清單為民眾習慣的 09... 格式
+  if (countryCode === '+886') {
+    if (cleanPhone.startsWith('0')) {
+      return cleanPhone;
+    } else {
+      // 如果沒打 0 (如打 912...)，則幫他補 0
+      return `0${cleanPhone}`;
+    }
   }
   
   return `${countryCode}${cleanPhone}`;
