@@ -3,12 +3,11 @@ import { AdminAccount } from '../../types';
 
 interface LogsTableProps {
   logs: any[][];
-  formatFullDateTime: (date: Date) => string;
   handleClearLogs: () => void;
   currentAdmin: AdminAccount | null;
 }
 
-const LogsTable: React.FC<LogsTableProps> = ({ logs, formatFullDateTime, handleClearLogs, currentAdmin }) => {
+const LogsTable: React.FC<LogsTableProps> = ({ logs, handleClearLogs, currentAdmin }) => {
   const isSuper = currentAdmin?.role === 'super';
   
   // 分頁狀態
