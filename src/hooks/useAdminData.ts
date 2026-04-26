@@ -120,8 +120,8 @@ export const useAdminData = ({
       setDeletedSubmissions(data);
     });
 
-    // 3. 監聽操作日誌 (提升至 150 筆，並加入更多容錯)
-    const qLogs = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(150));
+    // 3. 監聽操作日誌 (提升至 1000 筆，支援前端分頁)
+    const qLogs = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(1000));
     const unsubLogs = onSnapshot(qLogs, (snapshot) => {
       const logHeader = ["時間", "操作類型", "操作者", "詳細內容"];
       const data = snapshot.docs.map(doc => {
