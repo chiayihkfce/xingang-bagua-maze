@@ -50,6 +50,9 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
   const [newPassword, setNewPassword] = useState('');
   const [newNickname, setNewNickname] = useState('');
 
+  // 新增：控制 LINE ID 教學顯示
+  const [showLineGuide, setShowLineGuide] = useState(false);
+
   useEffect(() => {
     if (show && currentAdmin) {
       setNickname(currentAdmin.nickname || currentAdmin.username);
@@ -307,8 +310,42 @@ const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({
               <div className="form-group">
                 <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                   <span>LINE 使用者 ID (lineUid)</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--primary-gold)' }}>💡 請在 LINE 輸入「取得ID」獲取</span>
+                  <span 
+                    onClick={() => setShowLineGuide(!showLineGuide)}
+                    style={{ 
+                      fontSize: '0.75rem', 
+                      color: 'var(--primary-gold)', 
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    💡 {showLineGuide ? '點擊關閉教學' : '點擊查看獲取教學'}
+                  </span>
                 </label>
+
+                {/* LINE ID 教學區域 */}
+                {showLineGuide && (
+                  <div style={{ 
+                    background: 'rgba(241, 196, 15, 0.05)', 
+                    padding: '1.2rem', 
+                    borderRadius: '12px', 
+                    border: '1px solid rgba(241, 196, 15, 0.2)',
+                    marginBottom: '1.2rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.5rem'
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '0.8rem' }}>步驟 1：掃描下方 QR Code 加入機器人好友</p>
+                      <img src="https://chiayihkfce.github.io/xingang-bagua-maze/line-qr.png" alt="Step 1" style={{ width: '180px', borderRadius: '12px', border: '2px solid white' }} />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--primary-gold)', fontWeight: 'bold', marginBottom: '0.8rem' }}>步驟 2：對話框中輸入「取得ID」即可獲得專屬代碼</p>
+                      <img src="https://chiayihkfce.github.io/xingang-bagua-maze/line-step2.png" alt="Step 2" style={{ width: '100%', maxWidth: '280px', borderRadius: '12px', border: '2px solid white' }} />
+                    </div>
+                  </div>
+                )}
+
                 <input type="text" value={lineUid} onChange={e => setLineUid(e.target.value)} placeholder="Uxxxxxxxxxxxxxxx..." style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', background: 'var(--input-bg, rgba(255,255,255,0.05))', color: 'var(--text-light)', fontFamily: 'monospace' }} />
               </div>
               <div className="form-group">
