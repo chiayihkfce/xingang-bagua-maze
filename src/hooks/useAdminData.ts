@@ -120,13 +120,13 @@ export const useAdminData = ({
       setDeletedSubmissions(data);
     });
 
-    // 3. 監聽操作日誌
-    const qLogs = query(collection(db, "logs"), orderBy("createdAt", "desc"), limit(50));
+    // 3. 監聽操作日誌 (提升至 150 筆，並加入更多容錯)
+    const qLogs = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(150));
     const unsubLogs = onSnapshot(qLogs, (snapshot) => {
       const logHeader = ["時間", "操作類型", "操作者", "詳細內容"];
       const data = snapshot.docs.map(doc => {
         const d = doc.data();
-        return [d.timestamp, d.type, d.operator || '未知', d.details];
+        return [d.timestamp, d.type, d.operator || '系統', d.details];
       });
       setLogs([logHeader, ...data]);
     });
