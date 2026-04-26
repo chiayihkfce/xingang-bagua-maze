@@ -120,14 +120,22 @@ export const useAdminData = ({
       setDeletedSubmissions(data);
     });
 
-    // 3. 監聽操作日誌 (提升至 1000 筆，支援前端分頁)
+    // 3. 監聽操作日誌 (提升至 1000 筆，支援前端分頁與強制排序)
     const qLogs = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(1000));
     const unsubLogs = onSnapshot(qLogs, (snapshot) => {
       const logHeader = ["時間", "操作類型", "操作者", "詳細內容"];
-      const data = snapshot.docs.map(doc => {
+      let data = snapshot.docs.map(doc => {
         const d = doc.data();
         return [d.timestamp, d.type, d.operator || '系統', d.details];
       });
+
+      // 強制前端二次排序：確保絕對的時間倒序 (由新到舊)
+      data.sort((a, b) => {
+        const dateA = new Date(String(a[0] || '').replace(/\//g, '-')).getTime();
+        const dateB = new Date(String(b[0] || '').replace(/\//g, '-')).getTime();
+        return dateB - dateA;
+      });
+
       setLogs([logHeader, ...data]);
     });
 
