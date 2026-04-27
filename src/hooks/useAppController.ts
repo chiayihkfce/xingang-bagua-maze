@@ -21,7 +21,7 @@ import { db } from "../firebase";
 import { useAppVersion } from './useAppVersion';
 
 export const useAppController = () => {
-  const APP_VERSION = '2.0.0';
+  const APP_VERSION = '2.0.1';
   useAppVersion(APP_VERSION);
   
   const state = useAppState();
