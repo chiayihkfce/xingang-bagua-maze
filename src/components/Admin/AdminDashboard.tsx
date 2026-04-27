@@ -214,6 +214,52 @@ const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
         </div>
       </header>
 
+      {/* 安全提醒區域 */}
+      {currentAdmin && (!currentAdmin.lineUid || currentAdmin.password === '123456') && (
+        <div style={{
+          background: 'rgba(241, 196, 15, 0.1)',
+          border: '1px solid var(--primary-gold)',
+          borderRadius: '12px',
+          padding: '1rem 1.5rem',
+          marginBottom: '2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1rem',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+            <div>
+              <h4 style={{ margin: 0, color: 'var(--primary-gold)', fontSize: '1rem' }}>帳號安全性提醒</h4>
+              <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-light)' }}>
+                {!currentAdmin.lineUid && currentAdmin.password === '123456' 
+                  ? '您的帳號尚未綁定 LINE ID 且仍在使用預設密碼，這存在極大安全風險。'
+                  : !currentAdmin.lineUid 
+                    ? '您的帳號尚未綁定 LINE ID，將無法使用 LINE 一鍵登入功能。'
+                    : '您的帳號仍在使用預設密碼 (123456)，請立即修改以確保安全。'}
+              </p>
+            </div>
+          </div>
+          <button 
+            onClick={() => setShowSettings(true)}
+            style={{
+              padding: '0.6rem 1.2rem',
+              borderRadius: '8px',
+              background: 'var(--primary-gold)',
+              color: '#000',
+              fontWeight: 'bold',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            ⚙️ 前往個人設定
+          </button>
+        </div>
+      )}
+
       <DashboardStats stats={dashboardStats} />
 
       {adminTab === 'sessions' ? (
