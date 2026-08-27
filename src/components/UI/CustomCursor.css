@@ -1,0 +1,107 @@
+.custom-cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background-color: var(--primary-gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  opacity: 0;
+  /* 移除原本的 left/top transition，改用 JS 控制 transform */
+  transition:
+    width 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    height 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 0.3s ease,
+    opacity 0.3s ease;
+  box-shadow: 0 0 10px var(--primary-gold);
+  will-change: transform, opacity;
+}
+
+.custom-cursor-dot.visible {
+  opacity: 1;
+}
+
+.custom-cursor-dot.hover {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  box-shadow: 0 0 20px #fff;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  pointer-events: none;
+  z-index: 99998;
+  opacity: 0;
+  transition:
+    width 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    height 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.custom-cursor-ring.visible {
+  opacity: 0.6;
+}
+
+.custom-cursor-ring svg {
+  width: 100%;
+  height: 100%;
+  animation: rotate-bagua-inner 10s linear infinite;
+}
+
+/* hover 只負責放大；透明度一律交給 .visible 控制，避免在 .visible 失效時
+   仍被 hover 的 opacity 蓋過去，造成「只有滑到可點元素才看得到」的鬼影現象 */
+.custom-cursor-ring.hover {
+  width: 50px;
+  height: 50px;
+}
+
+/* 只有在 .visible 生效（鼠標生命週期正常）時，hover 才提升到全顯示 */
+.custom-cursor-ring.visible.hover {
+  opacity: 1;
+}
+
+.custom-cursor-ring.hover svg {
+  animation: rotate-bagua-inner 3s linear infinite;
+}
+
+@keyframes rotate-bagua-inner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 在觸控裝置（手機、平板）上徹底隱藏客製鼠標 */
+@media (pointer: coarse) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+/* 額外的隱藏邏輯，針對不支援 Hover 的裝置 */
+@media (any-hover: none) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+/* 隱藏原生鼠標 (只要裝置支援任何形式的滑鼠 hover 即生效) */
+@media (any-hover: hover) {
+  body.custom-cursor-active *,
+  body.custom-cursor-active *::before,
+  body.custom-cursor-active *::after {
+    cursor: none !important;
+  }
+}

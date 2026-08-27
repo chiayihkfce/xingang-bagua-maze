@@ -1,0 +1,250 @@
+import React from 'react';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp
+} from 'firebase/firestore';
+import { db } from '../firebase';
+import { FormData, FormErrors, PaymentMethod } from '../types';
+import { formatPhoneForDB } from '../utils/formatUtils';
+import { formatFullDateTime } from '../utils/dateUtils';
+
+interface UseRegistrationActionsProps {
+  formData: FormData;
+  formErrors: FormErrors;
+  sessionType: '一般預約' | '特別預約' | '';
+  calculatedTotal: number;
+  paymentMethods: PaymentMethod[];
+  loadTime: number;
+  setIsSubmitting: (val: boolean) => void;
+  setLastSubmissionId: (id: string | null) => void;
+  setSubmitted: (val: boolean) => void;
+  showAlert: (message: string) => void;
+  setShowConfirmation: (val: boolean) => void;
+  addLog: (type: string, details: string) => Promise<void>;
+}
+
+/**
+ * 處理報名流程中的各項行為邏輯 (提交、存檔、更新末五碼)
+ */
+export const useRegistrationActions = ({
+  formData,
+  formErrors,
+  sessionType,
+  calculatedTotal,
+  paymentMethods,
+  loadTime,
+  setIsSubmitting,
+  setLastSubmissionId,
+  setSubmitted,
+  showAlert,
+  setShowConfirmation,
+  addLog
+}: UseRegistrationActionsProps) => {
+  /**
+   * 報名表單初步送出 (驗證並開啟確認視窗)
+   */
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formErrors.email || formErrors.phone || formErrors.name) {
+      showAlert('請修正表單中的錯誤紅字後再試。');
+      return;
+    }
+
+    const requiredFields = [
+      { key: 'name', label: '姓名' },
+      { key: 'phone', label: '電話' },
+      { key: 'email', label: 'Email' }
+    ];
+
+    for (const field of requiredFields) {
+      const value = formData[field.key as keyof typeof formData];
+      if (!value || (typeof value === 'string' && value.trim() === '')) {
+        showAlert(`請填寫${field.label}`);
+        return;
+      }
+    }
+
+    if (sessionType === '') {
+      showAlert('請選擇場次類型');
+      return;
+    }
+    if (!formData.session) {
+      showAlert('尚未選定場次');
+      return;
+    }
+    if (!formData.pickupTime) {
+      showAlert('請選擇日期時間');
+      return;
+    }
+
+    setShowConfirmation(true);
+  };
+
+  /**
+   * 傳送 LINE 通知給管理員 (透過 Google Apps Script 中轉)
+   */
+  const sendLineNotification = async (data: any) => {
+    // ⚠️ 請務必在此替換為您新創的 GAS 部署網址
+    const WEBHOOK_URL =
+      'https://script.google.com/macros/s/AKfycbxakCReNaHCX3BK7XpJZLZ8Gdp_d6quOXfReq6Ev5S-emwdQSxuzM2OILkXjEp9WVM9ug/exec';
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'new_registration',
+          ...data // 直接展開所有資料，包含 id
+        })
+      });
+    } catch (e) {
+      console.error('LINE Notification failed:', e);
+    }
+  };
+
+  /**
+   * 執行最終資料寫入的函數 (核心存檔邏輯)
+   */
+  const executeFinalSubmission = async (last5?: string) => {
+    setIsSubmitting(true);
+    try {
+      const combinedPhone = formatPhoneForDB(
+        formData.countryCode,
+        formData.phone
+      );
+
+      const submissionData = {
+        ...formData,
+        phone: combinedPhone,
+        players: formData.players.trim() || '1',
+        notes: formData.notes.trim() || '無',
+        paymentMethod: formData.paymentMethod.split(' (')[0],
+        bankLast5: last5 || '無',
+        totalAmount: calculatedTotal,
+        referral:
+          formData.referral.length > 0
+            ? formData.referral.join('、')
+            : '基金會FB',
+        timestamp: formatFullDateTime(new Date()),
+        status: '待審核',
+        createdAt: serverTimestamp(),
+        deleted: false
+      };
+
+      const docRef = await addDoc(
+        collection(db, 'registrations'),
+        submissionData
+      );
+      const finalData = { ...submissionData, id: docRef.id }; // 包含新產生的 ID
+      setLastSubmissionId(docRef.id);
+
+      // 🚀 關鍵修正：先傳送 LINE 通知 (不等待)，避免被後續 addLog 阻塞
+      sendLineNotification(finalData);
+
+      try {
+        await addLog(
+          '報名提交',
+          `${formData.name} 提交了報名 (${formData.session})`
+        );
+      } catch (logErr) {
+        console.error('Log failed:', logErr);
+      }
+
+      return docRef.id;
+    } catch (err) {
+      console.error('提交失敗:', err);
+      showAlert('提交失敗，請檢查網路連線。');
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 確認視窗按下確認後的最終處理
+   */
+  const handleConfirmSubmit = async () => {
+    if (formData.hp_field !== '') return;
+    const timeDiff = (Date.now() - loadTime) / 1000;
+    if (timeDiff < 3) {
+      showAlert('填表速度過快，請稍候再試');
+      return;
+    }
+
+    const qty = parseInt(formData.quantity) || 0;
+    const players = parseInt(formData.players) || 0;
+    const maxPlayers = qty * 4;
+
+    if (qty <= 0) {
+      showAlert('份數必須至少為 1 份');
+      setShowConfirmation(false);
+      return;
+    }
+    if (players <= 0 || players > maxPlayers) {
+      showAlert(`遊玩人數上限應為 ${maxPlayers} 人`);
+      setShowConfirmation(false);
+      return;
+    }
+
+    setShowConfirmation(false);
+
+    const selectedPayment = (paymentMethods || []).find(
+      (m) => m.name === formData.paymentMethod
+    );
+
+    if (
+      selectedPayment?.type === 'bank' ||
+      selectedPayment?.type === 'linepay'
+    ) {
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    try {
+      await executeFinalSubmission();
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      // 錯誤已處理
+    }
+  };
+
+  /**
+   * 更新銀行末五碼 (異步或先存檔)
+   */
+  const handleUpdateBankLast5 = async (id: string, last5: string) => {
+    try {
+      if (id) {
+        const docRef = doc(db, 'registrations', id);
+        await updateDoc(docRef, { bankLast5: last5 });
+        return true;
+      } else {
+        const newId = await executeFinalSubmission(last5);
+        return !!newId;
+      }
+    } catch (err) {
+      console.error('更新末五碼失敗:', err);
+      return false;
+    }
+  };
+
+  /**
+   * 重置整個表單與應用程式狀態
+   */
+  const resetForm = () => {
+    window.location.reload();
+  };
+
+  return {
+    handleSubmit,
+    executeFinalSubmission,
+    handleConfirmSubmit,
+    handleUpdateBankLast5,
+    resetForm
+  };
+};

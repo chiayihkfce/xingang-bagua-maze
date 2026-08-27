@@ -1,0 +1,556 @@
+import React from 'react';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  setDoc,
+  writeBatch,
+  serverTimestamp
+} from 'firebase/firestore';
+import { db } from '../firebase';
+import {
+  Session,
+  TimeslotConfig,
+  PaymentMethod,
+  SealConfig,
+  SealType,
+  IdentityPricing,
+  ClosedDaysConfig
+} from '../types';
+import { cleanSessionTimeFormat } from '../utils/dateUtils';
+import { readExcelFile } from '../utils/excelUtils';
+
+interface UseSettingsActionsProps {
+  sessions: Session[];
+  paymentMethods: PaymentMethod[];
+  generalTimeSlots: string[];
+  specialTimeSlots: string[];
+  newManualTime: string;
+  newSession: {
+    name: string;
+    price: string;
+    fixedDate: string;
+    fixedTime: string;
+    isSpecial: boolean;
+    enabled: boolean;
+  };
+  editingSession: {
+    id: string;
+    oldName: string;
+    newName: string;
+    newPrice: string;
+    fixedDate: string;
+    fixedTime: string;
+    isSpecial: boolean;
+    enabled: boolean;
+  };
+  setNewSession: (data: any) => void;
+  setNewManualTime: (time: string) => void;
+  setIsSubmitting: (val: boolean) => void;
+  setIsEditingSession: (val: boolean) => void;
+  setEditingSession: (data: any) => void;
+  setIsDataLoading: (val: boolean) => void;
+  setGeneralTimeSlots: (slots: string[]) => void;
+  setSpecialTimeSlots: (slots: string[]) => void;
+  setTimeslotConfig: (val: any) => void;
+  setSealConfig: (val: SealConfig) => void;
+  addLog: (type: string, details: string) => Promise<void>;
+  showAlert: (message: string) => void;
+  showConfirm: (message: string, onConfirm: () => void) => void;
+}
+
+/**
+ * 處理管理員後台的場次、時段與付款方式等設定變更邏輯
+ */
+export const useSettingsActions = ({
+  sessions,
+  paymentMethods,
+  generalTimeSlots,
+  specialTimeSlots,
+  newManualTime,
+  newSession,
+  editingSession,
+  setNewSession,
+  setNewManualTime,
+  setIsSubmitting,
+  setIsEditingSession,
+  setEditingSession,
+  setIsDataLoading,
+  setGeneralTimeSlots,
+  setSpecialTimeSlots,
+  setTimeslotConfig,
+  setSealConfig,
+  addLog,
+  showAlert,
+  showConfirm
+}: UseSettingsActionsProps) => {
+  /**
+   * 切換場次啟用狀態
+   */
+  const toggleSessionEnabled = async (session: Session) => {
+    if (!session.id) return;
+    const newStatus = session.enabled === false; // 如果是 false 則轉 true, 否則轉 false
+    const collectionName = session.isSpecial ? 'special_sessions' : 'sessions';
+    try {
+      await updateDoc(doc(db, collectionName, session.id), {
+        enabled: newStatus
+      });
+      await addLog(
+        '修改場次',
+        `將場次 ${session.name} 設定為 ${newStatus ? '顯示' : '隱藏'}`
+      );
+    } catch (err) {
+      console.error(err);
+      showAlert('狀態更新失敗');
+    }
+  };
+
+  /**
+   * 新增或更新身分金額設定
+   */
+  const saveIdentityPricing = async (config: Partial<IdentityPricing>) => {
+    setIsSubmitting(true);
+    try {
+      const { id, ...data } = config;
+
+      if (id) {
+        // 更新現有
+        const docRef = doc(db, 'identity_pricings', id);
+        await updateDoc(docRef, {
+          ...data,
+          updatedAt: serverTimestamp()
+        });
+        await addLog('更新費率', `更新身分費率: ${data.name} ($${data.price})`);
+      } else {
+        // 新增
+        await addDoc(collection(db, 'identity_pricings'), {
+          name: data.name || '',
+          price: data.price || 0,
+          enabled: data.enabled ?? true,
+          createdAt: serverTimestamp()
+        });
+        await addLog('新增費率', `新增身分費率: ${data.name} ($${data.price})`);
+      }
+      showAlert('身分金額設定已儲存！');
+    } catch (e) {
+      console.error('Save Identity Pricing Error:', e);
+      showAlert('儲存失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 刪除身分費率
+   */
+  const deleteIdentityPricing = async (id: string, name: string) => {
+    showConfirm(`確定要刪除「${name}」的費率設定嗎？`, async () => {
+      setIsSubmitting(true);
+      try {
+        await deleteDoc(doc(db, 'identity_pricings', id));
+        await addLog('刪除費率', `刪除了身分費率: ${name}`);
+        showAlert('刪除成功');
+      } catch (e) {
+        console.error('Delete Identity Pricing Error:', e);
+        showAlert('刪除失敗');
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
+  };
+
+  /**
+   * 更新官印設定
+   */
+  const updateSealConfig = async (activeSeal: SealType) => {
+    setIsSubmitting(true);
+    try {
+      await setDoc(doc(db, 'config', 'seal_config'), { activeSeal });
+      setSealConfig({ activeSeal });
+      await addLog('更新設定', `變更官印款式為: ${activeSeal}`);
+      showAlert('官印設定已更新！');
+    } catch (e) {
+      console.error('Update Seal Error:', e);
+      showAlert('更新失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 手動新增時段 (HH:mm)
+   */
+  const handleManualTimeAdd = (type: 'general' | 'special') => {
+    if (!newManualTime || !/^([01]\d|2[0-3]):([0-5]\d)$/.test(newManualTime)) {
+      showAlert('請輸入正確的時間格式 (HH:mm)');
+      return;
+    }
+    if (type === 'general') {
+      if (generalTimeSlots.includes(newManualTime)) return;
+      setGeneralTimeSlots([...generalTimeSlots, newManualTime].sort());
+    } else {
+      if (specialTimeSlots.includes(newManualTime)) return;
+      setSpecialTimeSlots([...specialTimeSlots, newManualTime].sort());
+    }
+    setNewManualTime('');
+  };
+
+  /**
+   * 移除特定時段
+   */
+  const removeTimeSlot = (type: 'general' | 'special', slot: string) => {
+    if (type === 'general') {
+      setGeneralTimeSlots(generalTimeSlots.filter((s) => s !== slot));
+    } else {
+      setSpecialTimeSlots(specialTimeSlots.filter((s) => s !== slot));
+    }
+  };
+
+  /**
+   * 新增場次 (一般或特別)
+   */
+  const handleAddSession = async () => {
+    if (!newSession.name || !newSession.price) return;
+    setIsSubmitting(true);
+
+    const collectionName = newSession.isSpecial
+      ? 'special_sessions'
+      : 'sessions';
+
+    try {
+      await addDoc(collection(db, collectionName), {
+        ...newSession,
+        price: Number(newSession.price),
+        enabled: newSession.enabled ?? true,
+        createdAt: serverTimestamp()
+      });
+      setNewSession({
+        name: '',
+        price: '',
+        fixedDate: '',
+        fixedTime: '',
+        isSpecial: false,
+        enabled: true
+      });
+      await addLog(
+        '新增場次',
+        `新增${newSession.isSpecial ? '特別' : '一般'}場次: ${newSession.name}`
+      );
+      showAlert('新增成功！');
+    } catch (err: any) {
+      console.error(err);
+      showAlert(`新增失敗！`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 開始編輯場次 (準備編輯資料並開啟 Modal)
+   */
+  const startEditSession = (session: Session) => {
+    const cleanedTime = cleanSessionTimeFormat(session.fixedTime || '');
+    setEditingSession({
+      id: (session as any).id,
+      oldName: session.name,
+      newName: session.name,
+      newPrice: String(session.price),
+      fixedDate: session.fixedDate || '',
+      fixedTime: cleanedTime,
+      isSpecial:
+        session.isSpecial !== undefined
+          ? session.isSpecial
+          : !!session.fixedDate,
+      enabled: session.enabled !== false
+    });
+    setIsEditingSession(true);
+  };
+
+  /**
+   * 提交場次修改
+   */
+  const handleUpdateSession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSession.id) return;
+    setIsSubmitting(true);
+    const collectionName = editingSession.isSpecial
+      ? 'special_sessions'
+      : 'sessions';
+    try {
+      const docRef = doc(db, collectionName, editingSession.id);
+      await updateDoc(docRef, {
+        name: editingSession.newName,
+        price: Number(editingSession.newPrice),
+        fixedDate: editingSession.fixedDate,
+        fixedTime: editingSession.fixedTime,
+        isSpecial: editingSession.isSpecial,
+        enabled: editingSession.enabled
+      });
+      setIsEditingSession(false);
+      await addLog(
+        '修改場次',
+        `將 ${editingSession.oldName} 修改為 ${editingSession.newName}`
+      );
+      showAlert('修改成功');
+    } catch (err) {
+      console.error(err);
+      showAlert('修改失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 刪除場次
+   */
+  const handleDeleteSession = async (name: string, id?: string) => {
+    showConfirm(`確定要刪除場次「${name}」嗎？`, async () => {
+      if (!id) return;
+      try {
+        const session = sessions.find((s) => (s as any).id === id);
+        const collectionName = session?.isSpecial
+          ? 'special_sessions'
+          : 'sessions';
+
+        await deleteDoc(doc(db, collectionName, id));
+        await addLog('刪除場次', `刪除了場次：${name}`);
+        showAlert('刪除成功');
+      } catch (err) {
+        console.error(err);
+        showAlert('刪除失敗');
+      }
+    });
+  };
+
+  /**
+   * 儲存預約時段配置
+   */
+  const saveTimeSlotsConfig = async (
+    type: 'general' | 'special',
+    config: TimeslotConfig,
+    slots: string[]
+  ) => {
+    setIsSubmitting(true);
+    try {
+      const docPath =
+        type === 'general' ? 'general_timeslots' : 'special_timeslots';
+      const docRef = doc(db, 'config', docPath);
+
+      const subConfig =
+        type === 'general'
+          ? {
+              start: config.generalStart,
+              end: config.generalEnd,
+              interval: config.generalInterval
+            }
+          : {
+              start: config.specialStart,
+              end: config.specialEnd,
+              interval: config.specialInterval
+            };
+
+      await setDoc(docRef, {
+        config: subConfig,
+        slots: slots,
+        updatedAt: serverTimestamp()
+      });
+
+      const batch = writeBatch(db);
+      let cleanupCount = 0;
+      const relevantSessions = sessions.filter(
+        (s) => s.isSpecial === (type === 'special')
+      );
+
+      for (const session of relevantSessions) {
+        if (session.fixedTime) {
+          const originalTimes = session.fixedTime.split(',').filter(Boolean);
+          const filteredTimes = originalTimes.filter((t) => slots.includes(t));
+
+          if (originalTimes.length !== filteredTimes.length) {
+            const collectionName =
+              type === 'general' ? 'sessions' : 'special_sessions';
+            const sessionRef = doc(db, collectionName, (session as any).id);
+            batch.update(sessionRef, { fixedTime: filteredTimes.join(',') });
+            cleanupCount++;
+          }
+        }
+      }
+
+      if (cleanupCount > 0) {
+        await batch.commit();
+      }
+
+      if (type === 'general') {
+        setGeneralTimeSlots(slots);
+        setTimeslotConfig((prev: any) => ({
+          ...prev,
+          generalStart: config.generalStart,
+          generalEnd: config.generalEnd,
+          generalInterval: config.generalInterval
+        }));
+      } else {
+        setSpecialTimeSlots(slots);
+        setTimeslotConfig((prev: any) => ({
+          ...prev,
+          specialStart: config.specialStart,
+          specialEnd: config.specialEnd,
+          specialInterval: config.specialInterval
+        }));
+      }
+
+      await addLog(
+        '修改時段',
+        `管理員更新了${type === 'general' ? '一般' : '特別'}預約時段設定，並同步清理了 ${cleanupCount} 個場次的無效時段`
+      );
+      showAlert(
+        `${type === 'general' ? '一般' : '特別'}預約時段已儲存${cleanupCount > 0 ? `，並同步清理了 ${cleanupCount} 個場次的失效時段` : ''}`
+      );
+    } catch (err) {
+      console.error(err);
+      showAlert('儲存失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * 付款方式管理：新增或修改
+   */
+  const addPaymentMethod = async (methodData: any) => {
+    if (!methodData.name) return;
+
+    const existingIndex = paymentMethods.findIndex(
+      (m) => m.id === methodData.id
+    );
+    let newMethods;
+    if (existingIndex > -1) {
+      newMethods = [...paymentMethods];
+      newMethods[existingIndex] = methodData;
+    } else {
+      newMethods = [...paymentMethods, methodData];
+    }
+
+    try {
+      await setDoc(doc(db, 'config', 'payments'), { methods: newMethods });
+      await addLog(
+        '付款方式',
+        `${existingIndex > -1 ? '修改' : '新增'}了付款方式: ${methodData.name}`
+      );
+      showAlert('已儲存變更');
+    } catch (e) {
+      console.error(e);
+      showAlert('儲存失敗');
+    }
+  };
+
+  /**
+   * 刪除付款方式
+   */
+  const deletePaymentMethod = async (method: PaymentMethod) => {
+    showConfirm(`確定要刪除「${method.name}」嗎？`, async () => {
+      const newMethods = paymentMethods.filter((m) => m.id !== method.id);
+      try {
+        await setDoc(doc(db, 'config', 'payments'), { methods: newMethods });
+        await addLog('付款方式', `刪除了付款方式: ${method.name}`);
+      } catch (e) {
+        console.error(e);
+        showAlert('刪除失敗');
+      }
+    });
+  };
+
+  /**
+   * 批次從 Excel 匯入場次資料
+   */
+  const handleImportSessionsExcel = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    showConfirm('確定要從此 Excel 匯入場次設定嗎？', async () => {
+      setIsDataLoading(true);
+      try {
+        const data = await readExcelFile(file);
+
+        if (data.length <= 1) {
+          showAlert('Excel 檔案似乎沒有資料。');
+          return;
+        }
+
+        const rows = data.slice(1);
+        let count = 0;
+
+        for (const row of rows) {
+          if (!row[0]) continue;
+
+          const isSpecial =
+            row[2] === '是' ||
+            row[2] === 'special' ||
+            row[2] === true ||
+            !!row[3];
+          const collectionName = isSpecial ? 'special_sessions' : 'sessions';
+
+          const sessionData = {
+            name: String(row[0]),
+            price: Number(row[1]) || 0,
+            isSpecial: isSpecial,
+            fixedDate: row[3] ? String(row[3]) : '',
+            fixedTime: row[4] ? String(row[4]) : '',
+            enName: row[5] ? String(row[5]) : '',
+            enabled: true,
+            createdAt: serverTimestamp()
+          };
+
+          await addDoc(collection(db, collectionName), sessionData);
+          count++;
+        }
+        await addLog('匯入場次', `批次匯入了 ${count} 個場次`);
+        showAlert(`成功匯入 ${count} 個場次！`);
+      } catch (err) {
+        console.error(err);
+        showAlert('匯入失敗，請檢查檔案格式。');
+      } finally {
+        setIsDataLoading(false);
+        e.target.value = '';
+      }
+    });
+  };
+
+  /**
+   * 儲存不開放日期配置
+   */
+  const saveClosedDaysConfig = async (config: ClosedDaysConfig) => {
+    setIsSubmitting(true);
+    try {
+      await setDoc(doc(db, 'config', 'closed_days'), config);
+      await addLog('更新設定', `更新了不開放日期配置 (模式: ${config.mode})`);
+      showAlert('不開放日期設定已儲存！');
+    } catch (e) {
+      console.error('Save Closed Days Error:', e);
+      showAlert('儲存失敗');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return {
+    handleAddSession,
+    startEditSession,
+    handleUpdateSession,
+    handleDeleteSession,
+    toggleSessionEnabled,
+    saveTimeSlotsConfig,
+    addPaymentMethod,
+    deletePaymentMethod,
+    handleImportSessionsExcel,
+    handleManualTimeAdd,
+    removeTimeSlot,
+    updateSealConfig,
+    saveIdentityPricing,
+    deleteIdentityPricing,
+    saveClosedDaysConfig
+  };
+};

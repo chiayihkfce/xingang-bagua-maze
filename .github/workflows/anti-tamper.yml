@@ -1,0 +1,54 @@
+name: Anti-Tamper Security Guard
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  check-author:
+    name: Verify Modification Authorization
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce Original Author Protection
+        run: |
+          echo "Current Actor: ${{ github.actor }}"
+          
+          # Only check if it's not the original author
+          if [ "${{ github.actor }}" != "shengwen0928" ]; then
+            echo "Checking if legal disclaimers and signatures are preserved..."
+            
+            # Function to check if signature exists in a file
+            check_signature() {
+              if [ -f "$1" ] && ! grep -q "shengwen0928" "$1"; then
+                echo "::error::🚨 SECURITY ALERT: The original author's signature or legal disclaimer was removed from $1!"
+                exit 1
+              fi
+            }
+
+            # Verify core files still contain the signature
+            check_signature "src/main.tsx"
+            check_signature "src/App.tsx"
+            check_signature "index.html"
+            check_signature "package.json"
+
+            # Strictly protect LICENSE and this workflow from ANY modification
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+            if echo "$CHANGED_FILES" | grep -qE "LICENSE|.github/workflows/anti-tamper.yml"; then
+              echo "::error::🚨 SECURITY ALERT: You are attempting to modify the LICENSE or Security Workflow. This is strictly prohibited for non-authors."
+              exit 1
+            fi
+            
+            echo "All security checks passed. Signatures are intact."
+          else
+            echo "Welcome back, Original Author (shengwen0928). Authorization granted."
+          fi

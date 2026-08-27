@@ -1,0 +1,126 @@
+import React from 'react';
+import Header from '../components/UI/Header';
+import BaguaParticles from '../components/UI/BaguaParticles';
+import StorySection from '../components/Registration/StorySection';
+import EventInfo from '../components/Registration/EventInfo';
+import RegistrationForm from '../components/Registration/RegistrationForm';
+import SocialButtons from '../components/UI/SocialButtons';
+import Footer from '../components/UI/Footer';
+import RegistrationOverlays from '../components/Registration/RegistrationOverlays';
+import MiniGames from '../components/UI/MiniGames';
+
+import { useAppContext } from '../context/AppContext';
+
+const RegistrationPage: React.FC = () => {
+  const [showGames, setShowGames] = React.useState(false);
+  const {
+    t,
+    lang,
+    setLang,
+    theme,
+    toggleTheme,
+    formData,
+    formErrors,
+    sessionType,
+    setSessionType,
+    sessions,
+    timeslotConfig,
+    generalTimeSlots,
+    specialTimeSlots,
+    handleInputChange,
+    handlePlayerInfoChange,
+    handleCheckboxChange,
+    handleDateChange,
+    handleCopyAccount,
+    handleSubmit,
+    isSubmitting,
+    calculatedTotal,
+    getSessionDisplayName,
+    getPickupLocationDisplay,
+    getPaymentMethodDisplay,
+    paymentMethods,
+    identityPricings,
+    isEntryAnimating,
+    shouldRenderEntry,
+    showConfirmation,
+    setShowConfirmation,
+    handleConfirmSubmit,
+    sysModal,
+    showAlert
+  } = useAppContext();
+  return (
+    <div className="container">
+      <BaguaParticles />
+      <RegistrationOverlays
+        {...{
+          t,
+          lang,
+          isEntryAnimating,
+          shouldRenderEntry,
+          showConfirmation,
+          setShowConfirmation,
+          formData,
+          calculatedTotal,
+          handleConfirmSubmit,
+          isSubmitting,
+          getSessionDisplayName,
+          getPickupLocationDisplay,
+          getPaymentMethodDisplay,
+          sysModal
+        }}
+      />
+      <Header {...{ lang, setLang, theme, toggleTheme, t }} />
+      <main className="main-content">
+        <div className="poster-container">
+          {/* 使用 img + srcSet（而非 picture/source），讓 <head> 的 preload
+              imagesrcset 能正確對應、避免海報被重複下載一次 */}
+          <img
+            src="poster-960.webp"
+            srcSet="poster-600.webp 600w, poster-960.webp 960w"
+            sizes="(max-width: 600px) 100vw, 960px"
+            alt="Poster"
+            className="poster-image"
+            width={906}
+            height={1280}
+            fetchPriority="high"
+          />
+        </div>
+        <StorySection t={t} />
+
+        <EventInfo t={t} />
+        <RegistrationForm
+          {...{
+            t,
+            lang,
+            formData,
+            formErrors,
+            sessionType,
+            setSessionType,
+            sessions,
+            timeslotConfig,
+            generalTimeSlots,
+            specialTimeSlots,
+            handleInputChange,
+            handlePlayerInfoChange,
+            handleCheckboxChange,
+            handleDateChange,
+            handleCopyAccount,
+            handleSubmit,
+            isSubmitting,
+            calculatedTotal,
+            getSessionDisplayName,
+            paymentMethods,
+            identityPricings,
+            showAlert,
+            setShowGames // 新增此 Prop
+          }}
+        />
+      </main>
+      <SocialButtons t={t} />
+      <Footer t={t} />
+      {showGames && <MiniGames onClose={() => setShowGames(false)} />}
+    </div>
+  );
+};
+
+export default RegistrationPage;
